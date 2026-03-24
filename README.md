@@ -1,2 +1,58 @@
-# CardGames
-Mobile Development App
+# Blackjack Android App
+
+A simple and interactive **Blackjack card game app** built in **Android Studio**. This project is designed to bring the classic casino card game to mobile devices with an easy-to-use interface, smooth gameplay, and core Blackjack rules.
+
+## Features
+
+- Play classic **Blackjack**
+- User-friendly Android interface
+- Randomized card dealing
+- Hit / Stand gameplay options
+- Automatic dealer logic
+- Win / Lose / Tie result detection
+- Score tracking system
+- Restart and replay functionality
+
+## How the Game Works
+
+Blackjack is a card game where the goal is to get as close to **21** as possible without going over.
+
+### Basic Rules
+- Number cards are worth their face value
+- Face cards (**Jack, Queen, King**) are worth **10**
+- **Ace** can count as **1 or 11**
+- The player starts with two cards
+- The dealer also starts with two cards
+- The player can choose to:
+  - **Hit** → draw another card
+  - **Stand** → keep their current hand
+- The dealer draws cards until reaching at least **17**
+- The winner is the hand closest to **21** without busting
+
+## Tech Stack
+
+- **Language:** Java / Kotlin
+- **IDE:** Android Studio
+- **Platform:** Android
+- **UI:** XML layouts
+- **Logic:** Object-oriented game design
+
+## Project Structure
+
+```plaintext
+BlackjackApp/
+│── app/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/example/blackjackapp/
+│   │   │   │   ├── MainActivity
+│   │   │   │   ├── GameManager
+│   │   │   │   ├── Deck
+│   │   │   │   ├── Card
+│   │   │   │   ├── Player
+│   │   │   │   └── Dealer
+│   │   │   ├── res/
+│   │   │   │   ├── layout/
+│   │   │   │   ├── drawable/
+│   │   │   │   └── values/
+│── README.md
