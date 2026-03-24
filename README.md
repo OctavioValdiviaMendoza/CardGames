@@ -5,6 +5,9 @@ A simple and interactive **Blackjack card game app** built in **Android Studio**
 # Backlog (Team)
 https://docs.google.com/spreadsheets/d/1SNjqR1fdunVrIrveGRwISWv3dDw8EMh-zkdc3s8yrRY/edit?gid=0#gid=0
 
+# Final Report (Team)
+https://docs.google.com/document/d/1N4FxgHcsZO1WT4UF8jLDBbBlf7-u8eCuXXCtXD3-d7w/edit?tab=t.0
+
 ## Features
 
 - Play classic **Blackjack**
