@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#081C15">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/card_games"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_a_game"
+            android:textSize="18sp"
+            android:textColor="#B7E4C7"
+            android:layout_marginBottom="32dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="10dp"
+            app:cardBackgroundColor="#1B4332">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <Button
+                    android:id="@+id/btnBlackjack"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/blackjack"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#2D6A4F"
+                    android:layout_marginBottom="16dp" />
+
+                <Button
+                    android:id="@+id/btnSeventeen"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/seventeen"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#40916C"
+                    android:layout_marginBottom="16dp" />
+
+                <Button
+                    android:id="@+id/btnWar"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/war"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#52B788"
+                    android:layout_marginBottom="16dp" />
+
+                <Button
+                    android:id="@+id/btnExit"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/exit"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#D62828" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>
