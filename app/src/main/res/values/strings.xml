@@ -6,4 +6,6 @@
     <string name="seventeen">♥ Seventeen</string>
     <string name="war">♣ War</string>
     <string name="exit">Exit</string>
+    <string name="hit_button">Hit</string>
+    <string name="stand_button">Stand</string>
 </resources>

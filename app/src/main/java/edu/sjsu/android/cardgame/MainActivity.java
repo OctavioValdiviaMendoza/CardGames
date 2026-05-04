@@ -21,5 +21,11 @@ public class MainActivity extends AppCompatActivity {
         btnBlackjack = findViewById(R.id.btnBlackjack);
         btnSeventeen = findViewById(R.id.btnSeventeen);
         btnWar = findViewById(R.id.btnWar);
-        btnExit = findViewById(R.id.btnExit);}
+        btnExit = findViewById(R.id.btnExit);
+
+        btnBlackjack.setOnClickListener(v -> {
+            Intent intent = new Intent(this, BlackJack.class);
+            startActivity(intent);
+        });
+    }
 }
