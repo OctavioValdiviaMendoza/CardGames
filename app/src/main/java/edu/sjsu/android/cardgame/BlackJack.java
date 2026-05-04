@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +53,10 @@ public class BlackJack extends AppCompatActivity {
         Button btnBack = findViewById(R.id.btn_back_menu);
 
         btnBack.setOnClickListener(v -> finish());
+
+        Button btnRules = findViewById(R.id.btn_rules);
+
+        btnRules.setOnClickListener(v -> showRules());
 
         deck = new Deck(this);
         dealHands();
@@ -263,5 +268,17 @@ public class BlackJack extends AppCompatActivity {
                 dealerScoreText.setText("Dealer: " + visibleValue + " + ?");
             }
         }
+    }
+
+    private void showRules() {
+        new AlertDialog.Builder(this)
+                .setTitle("Blackjack Rules")
+                .setMessage("Try to get as close to 21 as possible without going over.\n\n" +
+                        "Tap Hit to draw another card.\n\n" +
+                        "Tap Stand to keep your score.\n\n" +
+                        "The dealer draws until reaching 17 or higher.\n\n" +
+                        "Highest score wins.")
+                .setPositiveButton("OK", null)
+                .show();
     }
 }

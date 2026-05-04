@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.app.AlertDialog;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,6 +32,10 @@ public class War extends AppCompatActivity {
         Button btnBack = findViewById(R.id.btn_back_menu);
 
         btnBack.setOnClickListener(v -> finish());
+
+        Button btnRules = findViewById(R.id.btn_rules);
+
+        btnRules.setOnClickListener(v -> showRules());
     }
 
     private void playRound() {
@@ -75,5 +80,15 @@ public class War extends AppCompatActivity {
         } else {
             resultText.setText("War! It's a Tie!");
         }
+    }
+
+    private void showRules() {
+        new AlertDialog.Builder(this)
+                .setTitle("War Rules")
+                .setMessage("Each player draws one card.\n\n" +
+                        "The higher card wins the round.\n\n" +
+                        "If both cards have the same value, it is a tie.")
+                .setPositiveButton("OK", null)
+                .show();
     }
 }
