@@ -17,6 +17,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="horizontal"
         android:padding="8dp" />
+    <TextView
+        android:id="@+id/dealer_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dealer: 0"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/dealer_hand"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/player_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player: 0"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/player_hand"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <LinearLayout
         android:id="@+id/player_hand"
@@ -51,6 +72,7 @@
             android:layout_height="wrap_content"
             android:text="@string/stand_button"
             android:backgroundTint="#1B4332"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

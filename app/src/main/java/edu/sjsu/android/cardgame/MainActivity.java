@@ -27,5 +27,12 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, BlackJack.class);
             startActivity(intent);
         });
+        btnWar.setOnClickListener(v -> {
+            Intent intent = new Intent(this, War.class);
+            startActivity(intent);
+        });
+        btnExit.setOnClickListener(v -> {
+            finish();
+        });
     }
 }

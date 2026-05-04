@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -26,6 +27,9 @@ public class BlackJack extends AppCompatActivity {
     private Button btnHit;
     private Button btnStand;
 
+    private TextView playerScoreText;
+    private TextView dealerScoreText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,9 @@ public class BlackJack extends AppCompatActivity {
             return insets;
         });
 
+        playerScoreText = findViewById(R.id.player_score);
+        dealerScoreText = findViewById(R.id.dealer_score);
+
         playerHand = findViewById(R.id.player_hand);
         dealerHand = findViewById(R.id.dealer_hand);
         btnHit = findViewById(R.id.btn_hit);
@@ -45,6 +52,7 @@ public class BlackJack extends AppCompatActivity {
 
         deck = new Deck(this);
         dealHands();
+        updateScores(false);
 
         // Hit button
         // Draws another random card to the player's hand
@@ -53,7 +61,7 @@ public class BlackJack extends AppCompatActivity {
 
             if (card != null) {
                 drawCard(playerHand, card);
-
+                updateScores(false);
                 int score = calculateScore(playerCardList);
                 if (score > 21) {
                     btnHit.setEnabled(false);
@@ -147,7 +155,7 @@ public class BlackJack extends AppCompatActivity {
         hiddenCard.setFaceUp(true);
         ImageView hiddenCardView = (ImageView) dealerHand.getChildAt(1);
         hiddenCardView.setImageResource(hiddenCard.getCardID());
-
+        updateScores(true);
         dealerHit();
     }
 
@@ -156,6 +164,7 @@ public class BlackJack extends AppCompatActivity {
     private void dealerHit() {
         if (calculateScore(dealerCardList) < 17) {
             drawCard(dealerHand, deck.draw());
+            updateScores(true);
             new android.os.Handler().postDelayed(this::dealerHit, 500);
         }
         else {
@@ -223,5 +232,23 @@ public class BlackJack extends AppCompatActivity {
 
         deck = new Deck(this);
         dealHands();
+        updateScores(false);
+    }
+
+    //updates the scores shown for the player and dealer
+    private void updateScores(boolean revealDealer) {
+        int playerScore = calculateScore(playerCardList);
+        playerScoreText.setText("Player: " + playerScore);
+
+        if (revealDealer) {
+            int dealerScore = calculateScore(dealerCardList);
+            dealerScoreText.setText("Dealer: " + dealerScore);
+        } else {
+            // Only show first dealer card
+            if (dealerCardList.size() > 0) {
+                int visibleValue = dealerCardList.get(0).getValue();
+                dealerScoreText.setText("Dealer: " + visibleValue + " + ?");
+            }
+        }
     }
 }
