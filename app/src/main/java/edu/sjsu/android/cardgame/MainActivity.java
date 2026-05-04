@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         btnSeventeen = findViewById(R.id.btnSeventeen);
         btnWar = findViewById(R.id.btnWar);
         btnExit = findViewById(R.id.btnExit);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         btnBlackjack.setOnClickListener(v -> {
             Intent intent = new Intent(this, BlackJack.class);
@@ -34,5 +35,11 @@ public class MainActivity extends AppCompatActivity {
         btnExit.setOnClickListener(v -> {
             finish();
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

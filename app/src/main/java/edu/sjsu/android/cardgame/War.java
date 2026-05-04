@@ -28,6 +28,9 @@ public class War extends AppCompatActivity {
         deck = new Deck(this);
 
         drawButton.setOnClickListener(v -> playRound());
+        Button btnBack = findViewById(R.id.btn_back_menu);
+
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void playRound() {
@@ -42,6 +45,24 @@ public class War extends AppCompatActivity {
         // Show cards
         playerCardView.setImageResource(playerCard.getCardID());
         dealerCardView.setImageResource(dealerCard.getCardID());
+        //card animations
+        playerCardView.setTranslationY(500f);
+        playerCardView.setAlpha(0f);
+
+        playerCardView.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(400)
+                .start();
+
+        dealerCardView.setTranslationY(-500f);
+        dealerCardView.setAlpha(0f);
+
+        dealerCardView.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(400)
+                .start();
 
         int playerValue = playerCard.getValue();
         int dealerValue = dealerCard.getValue();

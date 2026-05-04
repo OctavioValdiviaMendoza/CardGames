@@ -49,6 +49,9 @@ public class BlackJack extends AppCompatActivity {
         dealerHand = findViewById(R.id.dealer_hand);
         btnHit = findViewById(R.id.btn_hit);
         btnStand = findViewById(R.id.btn_stand);
+        Button btnBack = findViewById(R.id.btn_back_menu);
+
+        btnBack.setOnClickListener(v -> finish());
 
         deck = new Deck(this);
         dealHands();
@@ -115,6 +118,16 @@ public class BlackJack extends AppCompatActivity {
 
         cardView.setLayoutParams(params);
         hand.addView(cardView);
+
+        cardView.setAlpha(0f);
+        cardView.setTranslationY(-100f);
+
+        cardView.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(400)
+                .start();
+
 
         // Adds the card to the list according to which hand it is
         if (hand == playerHand) {

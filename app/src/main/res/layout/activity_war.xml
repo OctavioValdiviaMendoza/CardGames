@@ -5,6 +5,17 @@
     android:layout_height="match_parent"
     android:background="#2D6A4F">
 
+    <Button
+        android:id="@+id/btn_back_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="← Menu"
+        android:layout_margin="16dp"
+        android:backgroundTint="#1B4332"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <ImageView
         android:id="@+id/dealer_card"
         android:layout_width="150dp"

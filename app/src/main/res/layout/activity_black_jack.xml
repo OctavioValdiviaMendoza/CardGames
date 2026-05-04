@@ -8,15 +8,29 @@
     tools:context=".BlackJack"
     android:background="#2D6A4F">
 
+    <Button
+        android:id="@+id/btn_back_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="← Menu"
+        android:layout_margin="16dp"
+        android:backgroundTint="#1B4332"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <LinearLayout
         android:id="@+id/dealer_hand"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="64dp"
         android:orientation="horizontal"
-        android:padding="8dp" />
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/dealer_score"
         android:layout_width="wrap_content"
