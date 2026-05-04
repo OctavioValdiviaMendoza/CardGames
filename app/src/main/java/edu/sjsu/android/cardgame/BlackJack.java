@@ -1,11 +1,13 @@
 package edu.sjsu.android.cardgame;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -14,6 +16,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.appcompat.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +36,12 @@ public class BlackJack extends AppCompatActivity {
     private TextView playerScoreText;
     private TextView dealerScoreText;
 
+    private TextView resultText;
+    private Button btnPlayAgain;
+
+    private TextView coinsText;
+    private SharedPreferences prefs;
+    private int coins;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +61,12 @@ public class BlackJack extends AppCompatActivity {
         dealerHand = findViewById(R.id.dealer_hand);
         btnHit = findViewById(R.id.btn_hit);
         btnStand = findViewById(R.id.btn_stand);
+        coinsText = findViewById(R.id.coins_text);
+
+        prefs = getSharedPreferences("game_data", MODE_PRIVATE);
+        coins = prefs.getInt("coins", 100);
+
+        updateCoinsText();
         Button btnBack = findViewById(R.id.btn_back_menu);
 
         btnBack.setOnClickListener(v -> finish());
@@ -57,6 +74,11 @@ public class BlackJack extends AppCompatActivity {
         Button btnRules = findViewById(R.id.btn_rules);
 
         btnRules.setOnClickListener(v -> showRules());
+
+        resultText = findViewById(R.id.result_text);
+        btnPlayAgain = findViewById(R.id.btn_play_again);
+
+        btnPlayAgain.setOnClickListener(v -> resetGame());
 
         deck = new Deck(this);
         dealHands();
@@ -122,10 +144,16 @@ public class BlackJack extends AppCompatActivity {
         }
 
         cardView.setLayoutParams(params);
-        hand.addView(cardView);
 
         cardView.setAlpha(0f);
-        cardView.setTranslationY(-100f);
+        if (hand == playerHand) {
+            cardView.setTranslationY(200f);
+        } else {
+            cardView.setTranslationY(-200f);
+        }
+        hand.addView(cardView);
+
+
 
         cardView.animate()
                 .alpha(1f)
@@ -214,31 +242,23 @@ public class BlackJack extends AppCompatActivity {
             message = "Both you and the dealer have the same score";
         }
 
-        new android.os.Handler().postDelayed(() -> {
-            // Pass both the title and the message now
-            showResults(title, message);
-        }, 1500);
-    }
+        if (title.equals("You Won")) {
+            changeCoins(10);
+        } else if (title.equals("You Lost")) {
+            changeCoins(-10);
+        }
 
-    // Win/Lose popup
-    private void showResults(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setCancelable(false);
+        resultText.setText(title + "\n" + message);
+        btnPlayAgain.setVisibility(View.VISIBLE);
 
-        builder.setPositiveButton("Play Again", (dialog, which) -> {
-            resetGame();
-        });
-        builder.setNegativeButton("Main Menu", (dialog, which) -> {
-            finish();
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        btnHit.setEnabled(false);
+        btnStand.setEnabled(false);
     }
 
     private void resetGame() {
+        resultText.setText("");
+        btnPlayAgain.setVisibility(View.GONE);
+
         playerHand.removeAllViews();
         dealerHand.removeAllViews();
 
@@ -280,5 +300,49 @@ public class BlackJack extends AppCompatActivity {
                         "Highest score wins.")
                 .setPositiveButton("OK", null)
                 .show();
+    }
+
+    private void updateCoinsText() {
+        coinsText.setText("Coins: " + coins);
+    }
+
+    private void changeCoins(int amount) {
+        coins += amount;
+
+        if (coins < 0) {
+            coins = 0;
+        }
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("coins", coins);
+        editor.apply();
+
+        updateCoinsText();
+
+        if (amount > 0) {
+            animateCoins(Color.GREEN);
+        } else if (amount < 0) {
+            animateCoins(Color.RED);
+        }
+    }
+
+    private void animateCoins(int color) {
+        coinsText.setTextColor(color);
+        coinsText.setScaleX(1f);
+        coinsText.setScaleY(1f);
+
+        coinsText.animate()
+                .scaleX(1.25f)
+                .scaleY(1.25f)
+                .setDuration(150)
+                .withEndAction(() -> {
+                    coinsText.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(150)
+                            .withEndAction(() -> coinsText.setTextColor(Color.WHITE))
+                            .start();
+                })
+                .start();
     }
 }
