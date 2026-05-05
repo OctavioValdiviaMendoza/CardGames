@@ -22,8 +22,10 @@ https://docs.google.com/document/d/1N4FxgHcsZO1WT4UF8jLDBbBlf7-u8eCuXXCtXD3-d7w/
 ## How the Game Works
 
 Blackjack is a card game where the goal is to get as close to **21** as possible without going over.
+Thirteen is a card game where the goal is to play all your cards before the other player.
+War is a card game where you go head to head to see which card is higher.
 
-### Basic Rules
+### Blackjack Basic Rules
 - Number cards are worth their face value
 - Face cards (**Jack, Queen, King**) are worth **10**
 - **Ace** can count as **1 or 11**
@@ -34,6 +36,26 @@ Blackjack is a card game where the goal is to get as close to **21** as possible
   - **Stand** → keep their current hand
 - The dealer draws cards until reaching at least **17**
 - The winner is the hand closest to **21** without busting
+
+### Thirteen Basic Rules
+- Order of cards goes: 3 4 5 6 7 8 9 10 Jack Queen King Ace 2
+- Order of suits goes Spades Clubs Diamonds Hearts
+- Both players start with 13 cards
+- The player can choose to:
+  - **Pass** → Pass their turn
+  - **Play** → Play the selected cards
+- The player must make a combination of either:
+  - Singles 
+  - Doubles
+  - Triples
+  - A sequence
+- The winner is the first player to empty their hand.
+
+### War Basic Rules
+- Number cards are worth their face value
+- Face cards (**Jack, Queen, King**) are worth the same.
+- Each player draws one card
+- The winner is whoever has the highest card.
 
 ## Tech Stack
 
@@ -46,11 +68,11 @@ Blackjack is a card game where the goal is to get as close to **21** as possible
 ## Project Structure
 
 ```plaintext
-BlackjackApp/
+CardGameApp/
 │── app/
 │   ├── src/
 │   │   ├── main/
-│   │   │   ├── java/com/example/blackjackapp/
+│   │   │   ├── java/com/example/cardgameapp/
 │   │   │   │   ├── MainActivity
 │   │   │   │   ├── GameManager
 │   │   │   │   ├── Deck
