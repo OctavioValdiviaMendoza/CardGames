@@ -28,6 +28,14 @@ public class Card {
         return cardID;
     }
 
+    public String getSuit() {
+        return suit;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
     public void setFaceUp(boolean isFaceUp) {
         this.isFaceUp = isFaceUp;
     }
