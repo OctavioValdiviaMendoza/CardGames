@@ -79,7 +79,7 @@ public class Thirteen extends AppCompatActivity {
         dealerHand.clear();
         selectedCards.clear();
         currentPile.clear();
-        currentPileLayout.removeAllViews(); // Clear the middle of the screen
+        currentPileLayout.removeAllViews();
         resultText.setText("Your Turn! Select cards to play.");
 
         for (int i = 0; i < 13; i++) {
@@ -105,7 +105,7 @@ public class Thirteen extends AppCompatActivity {
             if (isDealer && layout == dealerHandLayout) {
                 cardView.setImageResource(R.drawable.cardback);
             } else {
-                cardView.setImageResource(card.getCardID()); // Face up for player OR Center pile
+                cardView.setImageResource(card.getCardID());
 
                 // Only allow clicking if it's in the player's hand
                 if (layout == playerHandLayout) {
@@ -141,11 +141,11 @@ public class Thirteen extends AppCompatActivity {
             selectedCards.clear();
 
             renderHand(playerHandLayout, playerHand, false);
-            renderHand(currentPileLayout, currentPile, false); // Render cards to center!
+            renderHand(currentPileLayout, currentPile, false);
             updateCardCounts();
 
             if (playerHand.isEmpty()) {
-                endGame("You Won!");
+                endGame("You Won! +10 coins");
             } else {
                 dealerTurn();
             }
@@ -165,17 +165,16 @@ public class Thirteen extends AppCompatActivity {
         dealerTurn();
     }
 
-    // --- Core Logic & Combinations ---
 
     private boolean isValidPlay(List<Card> play) {
         String playType = getComboType(play);
         if (playType.equals("INVALID")) return false;
 
-        if (currentPile.isEmpty()) return true; // Free turn
+        if (currentPile.isEmpty()) return true;
 
         String pileType = getComboType(currentPile);
 
-        // Must match combo type and size (e.g., 3-card sequence beats 3-card sequence)
+        // Must match combo type and size (3-card sequence beats 3-card sequence)
         if (!playType.equals(pileType) || play.size() != currentPile.size()) return false;
 
         Card highestPlay = play.get(play.size() - 1);
@@ -240,7 +239,7 @@ public class Thirteen extends AppCompatActivity {
                     potentialPlay.add(dealerHand.get(j));
                 }
 
-                // If it doesn't match perfectly sequentially, we try jumping over cards (simplified AI)
+                // If it doesn't match perfectly sequentially, we try jumping over cards
                 // If it's a valid play, dealer makes it.
                 if (getComboType(potentialPlay).equals(targetType) &&
                         getThirteenValue(potentialPlay.get(potentialPlay.size()-1)) > pileValue) {
@@ -324,7 +323,6 @@ public class Thirteen extends AppCompatActivity {
                 .setMessage("Each player draws 13 cards.\n\n" +
                         "Rank of cards goes 3 4 5 6 7 8 9 10 Jack Queen King Ace 2.\n\n" +
                         "Rank of suits goes Spades Clubs Diamonds Hearts.\n\n" +
-                        "The player with the lowest card goes first.\n\n" +
                         "Your goal is to make a combination with either " +
                         "single, double, triple, or a sequence.\n\n" +
                         "When a combination is played, the other player must match.\n\n" +
