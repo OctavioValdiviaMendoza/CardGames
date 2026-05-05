@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     private Button btnBlackjack;
-    private Button btnSeventeen;
+    private Button btnThirteen;
     private Button btnWar;
     private Button btnExit;
 
@@ -19,13 +19,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnBlackjack = findViewById(R.id.btnBlackjack);
-        btnSeventeen = findViewById(R.id.btnSeventeen);
+        btnThirteen = findViewById(R.id.btnThirteen);
         btnWar = findViewById(R.id.btnWar);
         btnExit = findViewById(R.id.btnExit);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         btnBlackjack.setOnClickListener(v -> {
             Intent intent = new Intent(this, BlackJack.class);
+            startActivity(intent);
+        });
+        btnThirteen.setOnClickListener(v -> {
+            Intent intent = new Intent(this, Thirteen.class);
             startActivity(intent);
         });
         btnWar.setOnClickListener(v -> {
