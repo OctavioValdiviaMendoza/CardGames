@@ -13,15 +13,19 @@ public class Card {
         isFaceUp = true;
     }
 
-    // According to BlackJack rules
     public int getValue() {
         if(rank.equals("jack") || rank.equals("queen") || rank.equals("king")) {
             return 10;
         }
-        if(rank.equals("1")) {
+        if(rank.equals("1") || rank.equals("ace")) {
             return 11;
         }
-        return Integer.parseInt(rank);
+        try {
+            return Integer.parseInt(rank);
+        }
+        catch (NumberFormatException e) {
+            return 0; // Fallback to prevent crash
+        }
     }
 
     public int getCardID() {
@@ -42,5 +46,16 @@ public class Card {
 
     public boolean isFaceUp() {
         return isFaceUp;
+    }
+
+    public String getRankLabel() {
+        switch (rank.toLowerCase()) {
+            case "1":
+            case "ace":   return "ace";
+            case "jack":  return "jack";
+            case "queen": return "queen";
+            case "king":  return "king";
+            default:      return rank; // Returns "2", "3", ... "10"
+        }
     }
 }

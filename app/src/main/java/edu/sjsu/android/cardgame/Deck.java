@@ -7,18 +7,32 @@ import java.util.Collections;
 import java.util.List;
 
 public class Deck {
-    private List<Card> cards = new ArrayList<>();
-    public Deck(Context context) {
-        String[] suits = {"clubs", "hearts", "diamonds", "spades"};
-        String[] ranks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
-        for (String suit : suits) {
-            for (String rank : ranks) {
-                String drawableName = suit + "_" + rank;
-                int resId = context.getResources().getIdentifier(drawableName, "drawable", context.getPackageName());
-                cards.add(new Card(suit, rank, resId));
+    private static List<Card> masterDeck = new ArrayList<>();
+    private List<Card> cards = new ArrayList<>();
+
+    public Deck() {
+        if (masterDeck.isEmpty()) {
+            String[] suits = {"clubs", "hearts", "diamonds", "spades"};
+            String[] ranks = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
+
+            for (String suit : suits) {
+                for (String rank : ranks) {
+                    masterDeck.add(new Card(suit, rank, 0));
+                }
             }
         }
+        reset();
+    }
+
+    public void reset() {
+        cards.clear();
+        cards.addAll(masterDeck);
+
+        for (Card card : cards) {
+            card.setFaceUp(true);
+        }
+
         shuffle();
     }
 

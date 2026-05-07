@@ -58,7 +58,7 @@ public class Thirteen extends AppCompatActivity {
         coins = prefs.getInt("coins", 100);
         updateCoinsText();
 
-        deck = new Deck(this);
+        deckCreate();
 
         Button btnBack = findViewById(R.id.btn_back_menu);
         btnBack.setOnClickListener(v -> finish());
@@ -74,7 +74,7 @@ public class Thirteen extends AppCompatActivity {
     }
 
     private void startGame() {
-        deck = new Deck(this);
+        deckCreate();
         playerHand.clear();
         dealerHand.clear();
         selectedCards.clear();
@@ -83,8 +83,16 @@ public class Thirteen extends AppCompatActivity {
         resultText.setText("Your Turn! Select cards to play.");
 
         for (int i = 0; i < 13; i++) {
-            playerHand.add(deck.draw());
-            dealerHand.add(deck.draw());
+            Card playerCard = deck.draw();
+            Card dealerCard = deck.draw();
+
+            if (playerCard != null) {
+                playerHand.add(playerCard);
+            }
+            if (dealerCard != null) {
+                dealerCard.setFaceUp(false);
+                dealerHand.add(dealerCard);
+            }
         }
 
         sortHand(playerHand);
@@ -96,10 +104,94 @@ public class Thirteen extends AppCompatActivity {
         updateCardCounts();
     }
 
+    private void deckCreate() {
+        if (deck == null) {
+            deck = new Deck();
+        }
+        else {
+            deck.reset();
+        }
+    }
+
+    private void setupCardVisuals(View cardView, Card card) {
+        ImageView imgBase = cardView.findViewById(R.id.img_card_base);
+        ImageView imgPips = cardView.findViewById(R.id.img_card_pips);
+        ImageView imgRankTop = cardView.findViewById(R.id.img_rank_top);
+        ImageView imgSuitTop = cardView.findViewById(R.id.img_suit_top);
+        ImageView imgRankBot = cardView.findViewById(R.id.img_rank_bottom);
+        ImageView imgSuitBot = cardView.findViewById(R.id.img_suit_bottom);
+
+        String theme = "classic";
+        String suit = card.getSuit();
+        String rank = card.getRankLabel();
+        String color = (suit.equals("hearts") || suit.equals("diamonds")) ? "red" : "black";
+
+        if (card.isFaceUp()) {
+            imgBase.setImageResource(getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName()));
+
+            // Pips vs Face Card Logic
+            int pipId;
+            if (theme.equals("classic") && (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
+                pipId = getResources().getIdentifier(theme + "_" + rank + "_" + color, "drawable", getPackageName());
+            } else {
+                pipId = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
+            }
+            imgPips.setImageResource(pipId);
+
+            // Corners
+            int rankId = getResources().getIdentifier(theme + "_" + rank + "_corner_" + color, "drawable", getPackageName());
+            int suitId = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
+
+            imgRankTop.setImageResource(rankId);
+            imgRankBot.setImageResource(rankId);
+            imgSuitTop.setImageResource(suitId);
+            imgSuitBot.setImageResource(suitId);
+
+            // Reset visibilities for reused views
+            imgPips.setVisibility(View.VISIBLE);
+            imgRankTop.setVisibility(View.VISIBLE);
+            imgSuitTop.setVisibility(View.VISIBLE);
+        } else {
+            // Cardback state
+            imgBase.setImageResource(R.drawable.cardback);
+            imgPips.setVisibility(View.GONE);
+            imgRankTop.setVisibility(View.GONE);
+            imgSuitTop.setVisibility(View.GONE);
+            imgRankBot.setVisibility(View.GONE);
+            imgSuitBot.setVisibility(View.GONE);
+        }
+    }
+
     private void renderHand(LinearLayout layout, List<Card> hand, boolean isDealer) {
         layout.removeAllViews();
 
         for (Card card : hand) {
+            View cardView = getLayoutInflater().inflate(R.layout.activity_card_view, layout, false);
+
+            setupCardVisuals(cardView, card);
+
+            // Selection Logic for Player
+            if (layout == playerHandLayout) {
+                cardView.setOnClickListener(v -> {
+                    if (selectedCards.contains(card)) {
+                        selectedCards.remove(card);
+                        cardView.setTranslationY(0f);
+                    } else {
+                        selectedCards.add(card);
+                        cardView.setTranslationY(-50f);
+                    }
+                });
+            }
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(200, 300);
+            if (layout.getChildCount() > 0) {
+                params.setMargins(-140, 0, 0, 0);
+            }
+            cardView.setLayoutParams(params);
+            layout.addView(cardView);
+        }
+
+        /**for (Card card : hand) {
             ImageView cardView = new ImageView(this);
 
             if (isDealer && layout == dealerHandLayout) {
@@ -127,11 +219,41 @@ public class Thirteen extends AppCompatActivity {
             }
             cardView.setLayoutParams(params);
             layout.addView(cardView);
-        }
+        }*/
     }
+
 
     private void playSelectedCards() {
         if (selectedCards.isEmpty()) return;
+        sortHand(selectedCards);
+
+        if (isValidPlay(selectedCards)) {
+            currentPile = new ArrayList<>(selectedCards);
+            playerHand.removeAll(selectedCards);
+            selectedCards.clear();
+
+            renderHand(playerHandLayout, playerHand, false);
+
+            for(Card c : currentPile) c.setFaceUp(true);
+            renderHand(currentPileLayout, currentPile, false);
+
+            updateCardCounts();
+
+            if (playerHand.isEmpty()) {
+                endGame("You Won! +10 coins");
+            } else {
+                dealerTurn();
+            }
+        } else {
+            Toast.makeText(this, "Invalid Play!", Toast.LENGTH_SHORT).show();
+            selectedCards.clear();
+            renderHand(playerHandLayout, playerHand, false);
+        }
+    }
+    /**private void playSelectedCards() {
+        if (selectedCards.isEmpty()) {
+            return;
+        }
 
         sortHand(selectedCards);
 
@@ -154,7 +276,7 @@ public class Thirteen extends AppCompatActivity {
             selectedCards.clear();
             renderHand(playerHandLayout, playerHand, false);
         }
-    }
+    }*/
 
     private void passTurn() {
         currentPile.clear();
@@ -281,13 +403,20 @@ public class Thirteen extends AppCompatActivity {
     }
 
     private int getRankValue(Card c) {
-        switch (c.getRank()) {
-            case "1": return 14;
+        String r = c.getRank();
+        switch (r) {
+            case "ace": return 14;
             case "2": return 15;
             case "jack": return 11;
             case "queen": return 12;
             case "king": return 13;
-            default: return Integer.parseInt(c.getRank());
+            default:
+                try {
+                    return Integer.parseInt(r);
+                }
+                catch (Exception e) {
+                    return 0;
+                }
         }
     }
 

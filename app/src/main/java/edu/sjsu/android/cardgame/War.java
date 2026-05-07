@@ -15,8 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class War extends AppCompatActivity {
 
     private Deck deck;
-    private ImageView playerCardView;
-    private ImageView dealerCardView;
+    private View playerCardContainer;
+    private View dealerCardContainer;
     private TextView resultText;
     private Button drawButton;
 
@@ -28,18 +28,28 @@ public class War extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_war);
 
-        playerCardView = findViewById(R.id.player_card);
-        dealerCardView = findViewById(R.id.dealer_card);
+        playerCardContainer = findViewById(R.id.player_card);
+        dealerCardContainer = findViewById(R.id.dealer_card);
+        getLayoutInflater().inflate(R.layout.activity_card_view, (android.view.ViewGroup) playerCardContainer, true);
+        getLayoutInflater().inflate(R.layout.activity_card_view, (android.view.ViewGroup) dealerCardContainer, true);
+
         resultText = findViewById(R.id.result_text);
         drawButton = findViewById(R.id.draw_button);
         coinsText = findViewById(R.id.coins_text);
+
+        setupInitialCardBacks();
 
         prefs = getSharedPreferences("game_data", MODE_PRIVATE);
         coins = prefs.getInt("coins", 100);
 
         updateCoinsText();
 
-        deck = new Deck(this);
+        if (deck == null) {
+            deck = new Deck();
+        }
+        else {
+            deck.reset();
+        }
 
         drawButton.setOnClickListener(v -> playRound());
         Button btnBack = findViewById(R.id.btn_back_menu);
@@ -56,27 +66,27 @@ public class War extends AppCompatActivity {
         Card dealerCard = deck.draw();
 
         if (playerCard == null || dealerCard == null) {
-            deck = new Deck(this);
-            return;
+            deck.reset();
+            playerCard = deck.draw();
+            dealerCard = deck.draw();
         }
 
         // Show cards
-        playerCardView.setImageResource(playerCard.getCardID());
-        dealerCardView.setImageResource(dealerCard.getCardID());
-        //card animations
-        playerCardView.setTranslationY(500f);
-        playerCardView.setAlpha(0f);
+        setupCardVisuals(playerCardContainer, playerCard);
+        setupCardVisuals(dealerCardContainer, dealerCard);
 
-        playerCardView.animate()
+        //card animations
+        playerCardContainer.setTranslationY(500f);
+        playerCardContainer.setAlpha(0f);
+        playerCardContainer
+                .animate()
                 .translationY(0f)
                 .alpha(1f)
-                .setDuration(400)
-                .start();
+                .setDuration(400).start();
 
-        dealerCardView.setTranslationY(-500f);
-        dealerCardView.setAlpha(0f);
-
-        dealerCardView.animate()
+        dealerCardContainer.setTranslationY(-500f);
+        dealerCardContainer.setAlpha(0f);
+        dealerCardContainer.animate()
                 .translationY(0f)
                 .alpha(1f)
                 .setDuration(400)
@@ -95,6 +105,55 @@ public class War extends AppCompatActivity {
         } else {
             resultText.setText("War! It's a Tie!\nNo coins changed");
         }
+    }
+
+    private void setupCardVisuals(View container, Card card) {
+        ImageView imgBase = container.findViewById(R.id.img_card_base);
+        ImageView imgPips = container.findViewById(R.id.img_card_pips);
+        ImageView imgRankTop = container.findViewById(R.id.img_rank_top);
+        ImageView imgSuitTop = container.findViewById(R.id.img_suit_top);
+        ImageView imgRankBot = container.findViewById(R.id.img_rank_bottom);
+        ImageView imgSuitBot = container.findViewById(R.id.img_suit_bottom);
+
+        String theme = "classic";
+        String suit = card.getSuit();
+        String rank = card.getRankLabel();
+        String color = (suit.equals("hearts") || suit.equals("diamonds")) ? "red" : "black";
+
+        imgBase.setImageResource(getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName()));
+
+        int pipId;
+        if (theme.equals("classic") && (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
+            pipId = getResources().getIdentifier(theme + "_" + rank + "_" + color, "drawable", getPackageName());
+        } else {
+            pipId = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
+        }
+        imgPips.setImageResource(pipId);
+
+        int rankId = getResources().getIdentifier(theme + "_" + rank + "_corner_" + color, "drawable", getPackageName());
+        int suitId = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
+
+        imgRankTop.setImageResource(rankId);
+        imgRankBot.setImageResource(rankId);
+        imgSuitTop.setImageResource(suitId);
+        imgSuitBot.setImageResource(suitId);
+
+        // Ensure visibility
+        imgPips.setVisibility(View.VISIBLE);
+        imgRankTop.setVisibility(View.VISIBLE);
+        imgSuitTop.setVisibility(View.VISIBLE);
+    }
+
+    private void setupInitialCardBacks() {
+        ImageView playerBase = playerCardContainer.findViewById(R.id.img_card_base);
+        ImageView dealerBase = dealerCardContainer.findViewById(R.id.img_card_base);
+
+        if (playerBase != null) playerBase.setImageResource(R.drawable.cardback);
+        if (dealerBase != null) dealerBase.setImageResource(R.drawable.cardback);
+
+        // Hide pip/rank layers initially
+        playerCardContainer.findViewById(R.id.img_card_pips).setVisibility(View.GONE);
+        dealerCardContainer.findViewById(R.id.img_card_pips).setVisibility(View.GONE);
     }
 
     private void showRules() {

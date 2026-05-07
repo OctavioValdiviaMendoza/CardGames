@@ -6,7 +6,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.graphics.Color;
 
 import androidx.activity.EdgeToEdge;
@@ -15,13 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.appcompat.app.AlertDialog;
+
 import android.content.SharedPreferences;
-import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class BlackJack extends AppCompatActivity {
@@ -42,6 +38,10 @@ public class BlackJack extends AppCompatActivity {
     private TextView coinsText;
     private SharedPreferences prefs;
     private int coins;
+    private int baseCardID;
+    private int symbolID;
+    private int suitID;
+    private int rankID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +80,12 @@ public class BlackJack extends AppCompatActivity {
 
         btnPlayAgain.setOnClickListener(v -> resetGame());
 
-        deck = new Deck(this);
+        if (deck == null) {
+            deck = new Deck();
+        }
+        else {
+            deck.reset();
+        }
         dealHands();
         updateScores(false);
 
@@ -127,47 +132,114 @@ public class BlackJack extends AppCompatActivity {
     }
 
     // Draws a card to the hand
+    // drawCard calls on drawCardAtIndex so that the dealer can reveal their card
     private void drawCard(LinearLayout hand, Card card) {
-        ImageView cardView = new ImageView(this);
+        drawCardAtIndex(hand, card, hand.getChildCount());
+    }
+    private void drawCardAtIndex(LinearLayout hand, Card card, int index) {
+        View cardView = getLayoutInflater().inflate(R.layout.activity_card_view, hand, false);
+
+        ImageView imageBaseCard = cardView.findViewById(R.id.img_card_base);
+        ImageView imageSymbols = cardView.findViewById(R.id.img_card_pips);
+        ImageView imageRankTop = cardView.findViewById(R.id.img_rank_top);
+        ImageView imageSuitTop = cardView.findViewById(R.id.img_suit_top);
+        ImageView imageRankBottom = cardView.findViewById(R.id.img_rank_bottom);
+        ImageView imageSuitBottom = cardView.findViewById(R.id.img_suit_bottom);
+
+        String theme = "classic";
+        String suit = card.getSuit();
+        String rank = card.getRankLabel();
+
         if (card.isFaceUp()) {
-            cardView.setImageResource(card.getCardID());
+            // Base card
+            baseCardID = getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName());
+            imageBaseCard.setImageResource(baseCardID);
+
+            // Symbols
+            // Filename: "[theme]_[suit]_[rank]"
+            if (theme.equals("classic") && (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
+                if (suit.equals("hearts") || suit.equals("diamonds")) {
+                    // Filename: "[theme]_[rank]_red"
+                    symbolID = getResources().getIdentifier(theme + "_" + rank + "_red", "drawable", getPackageName());
+                    if (symbolID == 0) android.util.Log.e("CardDebug", "FAILED to find Face Pip (Red): " + theme + "_" + rank + "_red");
+                }
+                else {
+                    // Filename: "[theme]_[rank]_black"
+                    symbolID = getResources().getIdentifier(theme + "_" + rank + "_black", "drawable", getPackageName());
+                    if (symbolID == 0) android.util.Log.e("CardDebug", "FAILED to find Face Pip (Black): " + theme + "_" + rank + "_black");
+                }
+            }
+            else {
+                symbolID = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
+                if (symbolID == 0) android.util.Log.e("CardDebug", "FAILED to find Standard Pip: " + theme + "_" + suit + "_" + rank);
+            }
+            imageSymbols.setImageResource(symbolID);
+
+            // Ranks (corner)
+            // Filename: "[theme]_[rank]_corner"
+            if (theme.equals("classic")) {
+                if (suit.equals("hearts") || suit.equals("diamonds")) {
+                    // Filename: "[theme]_[rank]_corner_red"
+                    rankID = getResources().getIdentifier(theme + "_" + rank + "_corner_red", "drawable", getPackageName());
+                    if (rankID == 0) android.util.Log.e("CardDebug", "FAILED to find Rank (Red): " + theme + "_" + rank + "_corner_red");
+                }
+                else {
+                    // Filename: "[theme]_[rank]_corner_black"
+                    rankID = getResources().getIdentifier(theme + "_" + rank + "_corner_black", "drawable", getPackageName());
+                    if (rankID == 0) android.util.Log.e("CardDebug", "FAILED to find Rank (Black): " + theme + "_" + rank + "_corner_black");
+                }
+            }
+            else {
+                rankID = getResources().getIdentifier(theme + "_" + rank + "_corner", "drawable", getPackageName());
+            }
+            imageRankTop.setImageResource(rankID);
+            imageRankBottom.setImageResource(rankID);
+
+            // Symbols (corner)
+            // Filename: "[theme]_[suit]_corner"
+            suitID = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
+            if (suitID == 0) android.util.Log.e("CardDebug", "FAILED to find Suit Corner: " + theme + "_" + suit + "_corner");
+            imageSuitTop.setImageResource(suitID);
+            imageSuitBottom.setImageResource(suitID);
         }
         else {
-            cardView.setImageResource(R.drawable.cardback);
+            // Face down
+            imageBaseCard.setImageResource(R.drawable.cardback);
+            imageSymbols.setVisibility(View.GONE);
+            imageRankTop.setVisibility(View.GONE);
+            imageSuitTop.setVisibility(View.GONE);
+            imageRankBottom.setVisibility(View.GONE);
+            imageSuitBottom.setVisibility(View.GONE);
         }
 
+        // Layout Params
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(250, 350);
-
-        // Used to overlap the cards in the hand
-        if (hand.getChildCount() > 0) {
+        if (index > 0) {
             params.setMargins(-100, 0, 0, 0);
         }
-
         cardView.setLayoutParams(params);
 
-        cardView.setAlpha(0f);
-        if (hand == playerHand) {
-            cardView.setTranslationY(200f);
-        } else {
-            cardView.setTranslationY(-200f);
-        }
-        hand.addView(cardView);
+        // Add to UI
+        hand.addView(cardView, index);
 
-
-
-        cardView.animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setDuration(400)
-                .start();
-
-
-        // Adds the card to the list according to which hand it is
-        if (hand == playerHand) {
+        // Logic: Only add to lists if this is a NEW draw (not a reveal)
+        // We check if the hand already contains the card logic-wise
+        if (hand == playerHand && !playerCardList.contains(card)) {
             playerCardList.add(card);
-        }
-        else {
+        } else if (hand == dealerHand && !dealerCardList.contains(card)) {
             dealerCardList.add(card);
+        }
+
+        // Animation
+        if (card.isFaceUp() && index == 1 && hand == dealerHand) {
+            // Special "Flip" animation for the dealer reveal
+            cardView.setRotationY(-90f);
+            cardView.animate().rotationY(0f).setDuration(300).start();
+        } else {
+            // Standard draw animation
+            cardView.setAlpha(0f);
+            cardView.setTranslationY(hand == playerHand ? 200f : -200f);
+            cardView.animate().alpha(1f).translationY(0f).setDuration(400).start();
         }
     }
 
@@ -194,13 +266,15 @@ public class BlackJack extends AppCompatActivity {
     }
 
     private void dealerTurn() {
-        int dealerScore = calculateScore(dealerCardList);
-
-        // Reveals hidden card
+        // 1. Logic: Flip the hidden card data
         Card hiddenCard = dealerCardList.get(1);
         hiddenCard.setFaceUp(true);
-        ImageView hiddenCardView = (ImageView) dealerHand.getChildAt(1);
-        hiddenCardView.setImageResource(hiddenCard.getCardID());
+
+        // 2. UI: Replace the View at index 1
+        // Instead of casting to ImageView, we remove the "back" and redraw the "front"
+        dealerHand.removeViewAt(1);
+        drawCardAtIndex(dealerHand, hiddenCard, 1);
+
         updateScores(true);
         dealerHit();
     }
@@ -268,7 +342,12 @@ public class BlackJack extends AppCompatActivity {
         btnHit.setEnabled(true);
         btnStand.setEnabled(true);
 
-        deck = new Deck(this);
+        if (deck == null) {
+            deck = new Deck();
+        }
+        else {
+            deck.reset();
+        }
         dealHands();
         updateScores(false);
     }
