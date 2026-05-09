@@ -24,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
         btnExit = findViewById(R.id.btnExit);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        new Thread(() -> {
+            Deck preloadDeck = new Deck();
+        }).start();
+
         btnBlackjack.setOnClickListener(v -> {
             Intent intent = new Intent(this, BlackJack.class);
             startActivity(intent);

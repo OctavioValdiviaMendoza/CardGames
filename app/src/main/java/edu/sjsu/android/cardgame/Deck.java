@@ -11,17 +11,19 @@ public class Deck {
     private static List<Card> masterDeck = new ArrayList<>();
     private List<Card> cards = new ArrayList<>();
 
-    public Deck() {
-        if (masterDeck.isEmpty()) {
-            String[] suits = {"clubs", "hearts", "diamonds", "spades"};
-            String[] ranks = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
+    static {
+        String[] suits = {"clubs", "hearts", "diamonds", "spades"};
+        String[] ranks = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
-            for (String suit : suits) {
-                for (String rank : ranks) {
-                    masterDeck.add(new Card(suit, rank, 0));
-                }
+        for (String suit : suits) {
+            for (String rank : ranks) {
+                // Initialize the master list once
+                masterDeck.add(new Card(suit, rank, 0));
             }
         }
+    }
+
+    public Deck() {
         reset();
     }
 

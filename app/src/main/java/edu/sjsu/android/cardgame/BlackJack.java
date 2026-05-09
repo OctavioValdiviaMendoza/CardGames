@@ -42,6 +42,7 @@ public class BlackJack extends AppCompatActivity {
     private int symbolID;
     private int suitID;
     private int rankID;
+    private int currentRulePage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,7 @@ public class BlackJack extends AppCompatActivity {
                 if (score > 21) {
                     btnHit.setEnabled(false);
                     btnStand.setEnabled(false);
-                    determineWinner();
+                    dealerTurn();
                 }
             }
         });
@@ -266,29 +267,35 @@ public class BlackJack extends AppCompatActivity {
     }
 
     private void dealerTurn() {
-        // 1. Logic: Flip the hidden card data
-        Card hiddenCard = dealerCardList.get(1);
-        hiddenCard.setFaceUp(true);
+        new android.os.Handler(getMainLooper()).postDelayed(() -> {
+            // Flip the hidden card data
+            Card hiddenCard = dealerCardList.get(1);
+            hiddenCard.setFaceUp(true);
 
-        // 2. UI: Replace the View at index 1
-        // Instead of casting to ImageView, we remove the "back" and redraw the "front"
-        dealerHand.removeViewAt(1);
-        drawCardAtIndex(dealerHand, hiddenCard, 1);
+            // Replace the View at index 1
+            dealerHand.removeViewAt(1);
+            drawCardAtIndex(dealerHand, hiddenCard, 1);
 
-        updateScores(true);
-        dealerHit();
+            updateScores(true);
+            new android.os.Handler(getMainLooper()).postDelayed(this::dealerHit, 500);
+        }, 500);
     }
 
     // Dealer continues to hit until it is at least 17 or is a bust
     // Adds a small delay between each hit
     private void dealerHit() {
-        if (calculateScore(dealerCardList) < 17) {
-            drawCard(dealerHand, deck.draw());
-            updateScores(true);
-            new android.os.Handler().postDelayed(this::dealerHit, 500);
+        if (calculateScore(dealerCardList) < 17 && calculateScore(playerCardList) <= 21) {
+            new android.os.Handler(getMainLooper()).postDelayed(() -> {
+                Card drawnCard = deck.draw();
+                if (drawnCard != null) {
+                    drawCard(dealerHand, drawnCard);
+                    updateScores(true);
+                    dealerHit();
+                }
+            }, 500);
         }
         else {
-            determineWinner();
+            new android.os.Handler(getMainLooper()).postDelayed(this::determineWinner, 500);
         }
     }
 
@@ -370,15 +377,78 @@ public class BlackJack extends AppCompatActivity {
     }
 
     private void showRules() {
-        new AlertDialog.Builder(this)
-                .setTitle("Blackjack Rules")
-                .setMessage("Try to get as close to 21 as possible without going over.\n\n" +
-                        "Tap Hit to draw another card.\n\n" +
-                        "Tap Stand to keep your score.\n\n" +
-                        "The dealer draws until reaching 17 or higher.\n\n" +
-                        "Highest score wins.")
-                .setPositiveButton("OK", null)
-                .show();
+        // Define your rule data
+        String[] titles = {"Objective", "Hit", "Stand", "Dealer Rule"};
+        String[] descriptions = {
+                "Get as close to 21 as possible without going over.",
+                "Take another card to increase your total score.",
+                "Keep your current total and end your turn.",
+                "The dealer must draw cards until they reach at least 17."
+        };
+        // Replace these with your actual drawable IDs
+        int[] images = {
+                R.drawable.background_tile,
+                R.drawable.background_tile,
+                R.drawable.background_tile,
+                R.drawable.background_tile
+        };
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialogue_rules, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+
+        // Transparent background so the CardView corners look rounded
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        TextView ruleTitle = dialogView.findViewById(R.id.rule_title);
+        TextView ruleDesc = dialogView.findViewById(R.id.rule_description);
+        ImageView ruleImage = dialogView.findViewById(R.id.rule_image);
+        Button btnNext = dialogView.findViewById(R.id.btn_next);
+        Button btnPrev = dialogView.findViewById(R.id.btn_prev);
+        Button btnClose = dialogView.findViewById(R.id.btn_close);
+
+        currentRulePage = 0;
+
+        // Helper to refresh UI
+        Runnable updateUI = () -> {
+            ruleTitle.setText(titles[currentRulePage]);
+            ruleDesc.setText(descriptions[currentRulePage]);
+            ruleImage.setImageResource(images[currentRulePage]);
+
+            btnPrev.setVisibility(currentRulePage == 0 ? View.INVISIBLE : View.VISIBLE);
+
+            if (currentRulePage == 0) {
+                btnPrev.setVisibility(View.GONE); // Hide on first page
+            }
+            else {
+                btnPrev.setVisibility(View.VISIBLE);   // Show on all other pages
+            }
+
+            if (currentRulePage == titles.length - 1) {
+                btnNext.setVisibility(View.GONE);
+                btnClose.setVisibility(View.VISIBLE);
+            }
+            else {
+                btnNext.setVisibility(View.VISIBLE);
+                btnClose.setVisibility(View.GONE);
+            }
+        };
+
+        btnNext.setOnClickListener(v -> {
+            currentRulePage++;
+            updateUI.run();
+        });
+
+        btnPrev.setOnClickListener(v -> {
+            currentRulePage--;
+            updateUI.run();
+        });
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        updateUI.run();
+        dialog.show();
     }
 
     private void updateCoinsText() {
