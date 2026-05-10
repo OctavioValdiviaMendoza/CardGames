@@ -114,70 +114,90 @@ public class War extends AppCompatActivity {
         }
     }
 
-    private void setupCardVisuals(View container, Card card) {
-        ImageView imgBase = container.findViewById(R.id.img_card_base);
-        ImageView imgPips = container.findViewById(R.id.img_card_pips);
-        ImageView imgRankTop = container.findViewById(R.id.img_rank_top);
-        ImageView imgSuitTop = container.findViewById(R.id.img_suit_top);
-        ImageView imgRankBot = container.findViewById(R.id.img_rank_bottom);
-        ImageView imgSuitBot = container.findViewById(R.id.img_suit_bottom);
+    private void setupCardVisuals(View cardView, Card card) {
+        int baseCardID;
+        int symbolID;
+        int suitID;
+        int rankID;
+
+        ImageView imageBaseCard = cardView.findViewById(R.id.img_card_base);
+        ImageView imageSymbols = cardView.findViewById(R.id.img_card_pips);
+        ImageView imageRankTop = cardView.findViewById(R.id.img_rank_top);
+        ImageView imageSuitTop = cardView.findViewById(R.id.img_suit_top);
+        ImageView imageRankBottom = cardView.findViewById(R.id.img_rank_bottom);
+        ImageView imageSuitBottom = cardView.findViewById(R.id.img_suit_bottom);
 
         String theme = currentTheme;
         String suit = card.getSuit();
         String rank = card.getRankLabel();
-        String color = (suit.equals("hearts") || suit.equals("diamonds")) ? "red" : "black";
 
-        int baseId = getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName());
-        if (baseId == 0) baseId = getResources().getIdentifier("classic_card_base", "drawable", getPackageName());
-        imgBase.setImageResource(baseId);
-
-        int pipId;
-        if ((theme.equals("classic") || theme.equals("blue") || theme.equals("green")) &&
-                (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
-
-            pipId = getResources().getIdentifier(theme + "_" + rank + "_" + color, "drawable", getPackageName());
-            if (pipId == 0) pipId = getResources().getIdentifier("classic_" + rank + "_" + color, "drawable", getPackageName());
-        } else {
-            pipId = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
-            if (pipId == 0) pipId = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
+        // Base card
+        // Filename: "[theme]_card_base"
+        baseCardID = getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName());
+        // Classic card base is used if file is not found
+        if (baseCardID == 0) {
+            baseCardID = getResources().getIdentifier("classic_card_base", "drawable", getPackageName());
         }
-        imgPips.setImageResource(pipId);
+        imageBaseCard.setImageResource(baseCardID);
 
-        int rankId = getResources().getIdentifier(theme + "_" + rank + "_corner_" + color, "drawable", getPackageName());
-        if (rankId == 0) {
-            rankId = getResources().getIdentifier("classic_" + rank + "_corner_" + color, "drawable", getPackageName());
+        // Symbols
+        // Filename: "[theme]_[suit]_[rank]"
+        symbolID = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
+        // Classic card symbol is used if file is not found
+        if (symbolID == 0) {
+            symbolID = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
         }
+        imageSymbols.setImageResource(symbolID);
 
-        int suitId = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
-        if (suitId == 0) {
-            suitId = getResources().getIdentifier("classic_" + suit + "_corner", "drawable", getPackageName());
+        // Ranks (corner)
+        // Filename: "[theme]_[rank]_corner"
+        rankID = getResources().getIdentifier(theme + "_" + rank + "_corner", "drawable", getPackageName());
+        // Classic rank is used if file is not found
+        if (rankID == 0) {
+            rankID = getResources().getIdentifier("classic_" + rank + "_corner", "drawable", getPackageName());
         }
+        imageRankTop.setImageResource(rankID);
+        imageRankBottom.setImageResource(rankID);
 
-        imgRankTop.setImageResource(rankId);
-        imgRankBot.setImageResource(rankId);
-        imgSuitTop.setImageResource(suitId);
-        imgSuitBot.setImageResource(suitId);
+        // Symbols (corner)
+        // Filename: "[theme]_[suit]_corner"
+        suitID = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
+        // Classic suit is used if file is not found
+        if (suitID == 0) {
+            suitID = getResources().getIdentifier("classic_" + suit + "_corner", "drawable", getPackageName());
+        }
+        imageSuitTop.setImageResource(suitID);
+        imageSuitBottom.setImageResource(suitID);
 
-        if (theme.equals("blue") || theme.equals("green")) {
+
+        if (theme.equals("classic") && (suit.equals("hearts") || suit.equals("diamonds"))) {
             android.graphics.PorterDuff.Mode mode = android.graphics.PorterDuff.Mode.SRC_ATOP;
-            imgPips.setColorFilter(themeColor, mode);
-            imgRankTop.setColorFilter(themeColor, mode);
-            imgRankBot.setColorFilter(themeColor, mode);
-            imgSuitTop.setColorFilter(themeColor, mode);
-            imgSuitBot.setColorFilter(themeColor, mode);
+            imageSymbols.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+            imageRankTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+            imageRankBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+            imageSuitTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+            imageSuitBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+        }
+        else if (theme.equals("blue") || theme.equals("green")) {
+            android.graphics.PorterDuff.Mode mode = android.graphics.PorterDuff.Mode.SRC_ATOP;
+            imageSymbols.setColorFilter(themeColor, mode);
+            imageRankTop.setColorFilter(themeColor, mode);
+            imageRankBottom.setColorFilter(themeColor, mode);
+            imageSuitTop.setColorFilter(themeColor, mode);
+            imageSuitBottom.setColorFilter(themeColor, mode);
         }
         else {
-            imgPips.clearColorFilter();
-            imgRankTop.clearColorFilter();
-            imgRankBot.clearColorFilter();
-            imgSuitTop.clearColorFilter();
-            imgSuitBot.clearColorFilter();
+            imageSymbols.clearColorFilter();
+            imageRankTop.clearColorFilter();
+            imageRankBottom.clearColorFilter();
+            imageSuitTop.clearColorFilter();
+            imageSuitBottom.clearColorFilter();
         }
 
         // Ensure visibility
-        imgPips.setVisibility(View.VISIBLE);
-        imgRankTop.setVisibility(View.VISIBLE);
-        imgSuitTop.setVisibility(View.VISIBLE);
+        imageSymbols.setVisibility(View.VISIBLE);
+        imageRankTop.setVisibility(View.VISIBLE);
+        imageRankBottom.setVisibility(View.VISIBLE);
     }
 
     private void setupInitialCardBacks() {

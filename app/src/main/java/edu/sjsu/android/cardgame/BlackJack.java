@@ -38,10 +38,6 @@ public class BlackJack extends AppCompatActivity {
     private TextView coinsText;
     private SharedPreferences prefs;
     private int coins;
-    private int baseCardID;
-    private int symbolID;
-    private int suitID;
-    private int rankID;
     private int currentRulePage;
     private String currentTheme;
     int themeColor;
@@ -144,6 +140,11 @@ public class BlackJack extends AppCompatActivity {
         drawCardAtIndex(hand, card, hand.getChildCount());
     }
     private void drawCardAtIndex(LinearLayout hand, Card card, int index) {
+        int baseCardID;
+        int symbolID;
+        int suitID;
+        int rankID;
+
         View cardView = getLayoutInflater().inflate(R.layout.activity_card_view, hand, false);
 
         ImageView imageBaseCard = cardView.findViewById(R.id.img_card_base);
@@ -159,7 +160,9 @@ public class BlackJack extends AppCompatActivity {
 
         if (card.isFaceUp()) {
             // Base card
+            // Filename: "[theme]_card_base"
             baseCardID = getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName());
+            // Classic card base is used if file is not found
             if (baseCardID == 0) {
                 baseCardID = getResources().getIdentifier("classic_card_base", "drawable", getPackageName());
             }
@@ -167,57 +170,19 @@ public class BlackJack extends AppCompatActivity {
 
             // Symbols
             // Filename: "[theme]_[suit]_[rank]"
-            if ((theme.equals("classic") || theme.equals("blue") || theme.equals("green")) &&
-                    (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
-                if (suit.equals("hearts") || suit.equals("diamonds")) {
-                    // Filename: "[theme]_[rank]_red"
-                    symbolID = getResources().getIdentifier(theme + "_" + rank + "_red", "drawable", getPackageName());
-
-                    // Classic card symbol is used if file is not found
-                    if (symbolID == 0) {
-                        symbolID = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
-                    }
-                }
-                else {
-                    // Filename: "[theme]_[rank]_black"
-                    symbolID = getResources().getIdentifier(theme + "_" + rank + "_black", "drawable", getPackageName());
-
-                    // Classic card symbol is used if file is not found
-                    if (symbolID == 0) {
-                        symbolID = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
-                    }
-                }
-            }
-            else {
-                symbolID = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
-
-                // Classic card symbol is used if file is not found
-                if (symbolID == 0) {
-                    symbolID = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
-                }
+            symbolID = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
+            // Classic card symbol is used if file is not found
+            if (symbolID == 0) {
+                symbolID = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
             }
             imageSymbols.setImageResource(symbolID);
 
             // Ranks (corner)
             // Filename: "[theme]_[rank]_corner"
-            if (theme.equals("classic")) {
-                if (suit.equals("hearts") || suit.equals("diamonds")) {
-                    // Filename: "[theme]_[rank]_corner_red"
-                    rankID = getResources().getIdentifier(theme + "_" + rank + "_corner_red", "drawable", getPackageName());
-                }
-                else {
-                    // Filename: "[theme]_[rank]_corner_black"
-                    rankID = getResources().getIdentifier(theme + "_" + rank + "_corner_black", "drawable", getPackageName());
-                    if (rankID == 0) android.util.Log.e("CardDebug", "FAILED to find Rank (Black): " + theme + "_" + rank + "_corner_black");
-                }
-            }
-            else {
-                rankID = getResources().getIdentifier(theme + "_" + rank + "_corner", "drawable", getPackageName());
-
-                // Classic rank is used if file is not found
-                if (rankID == 0) {
-                    rankID = getResources().getIdentifier("classic_" + rank + "_corner_red", "drawable", getPackageName());
-                }
+            rankID = getResources().getIdentifier(theme + "_" + rank + "_corner", "drawable", getPackageName());
+            // Classic rank is used if file is not found
+            if (rankID == 0) {
+                rankID = getResources().getIdentifier("classic_" + rank + "_corner", "drawable", getPackageName());
             }
             imageRankTop.setImageResource(rankID);
             imageRankBottom.setImageResource(rankID);
@@ -225,6 +190,7 @@ public class BlackJack extends AppCompatActivity {
             // Symbols (corner)
             // Filename: "[theme]_[suit]_corner"
             suitID = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
+            // Classic suit is used if file is not found
             if (suitID == 0) {
                 suitID = getResources().getIdentifier("classic_" + suit + "_corner", "drawable", getPackageName());
             }
@@ -242,7 +208,15 @@ public class BlackJack extends AppCompatActivity {
         }
 
         // Color filters
-        if (theme.equals("blue") || theme.equals("green")) {
+        if (theme.equals("classic") && (suit.equals("hearts") || suit.equals("diamonds"))) {
+            android.graphics.PorterDuff.Mode mode = android.graphics.PorterDuff.Mode.SRC_ATOP;
+            imageSymbols.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+            imageRankTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+            imageRankBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+            imageSuitTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+            imageSuitBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+        }
+        else if (theme.equals("blue") || theme.equals("green")) {
             android.graphics.PorterDuff.Mode mode = android.graphics.PorterDuff.Mode.SRC_ATOP;
             imageSymbols.setColorFilter(themeColor, mode);
             imageRankTop.setColorFilter(themeColor, mode);
