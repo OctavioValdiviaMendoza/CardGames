@@ -19,6 +19,7 @@ public class War extends AppCompatActivity {
     private View dealerCardContainer;
     private TextView resultText;
     private Button drawButton;
+    private int currentRulePage;
 
     private TextView coinsText;
     private SharedPreferences prefs;
@@ -157,13 +158,84 @@ public class War extends AppCompatActivity {
     }
 
     private void showRules() {
-        new AlertDialog.Builder(this)
-                .setTitle("War Rules")
-                .setMessage("Each player draws one card.\n\n" +
-                        "The higher card wins the round.\n\n" +
-                        "If both cards have the same value, it is a tie.")
-                .setPositiveButton("OK", null)
-                .show();
+        String[] titles = {
+                "How to Play"
+        };
+        String[] descriptions = {
+                "Each player draws one card." +
+                    "\n\nThe higher card wins the round. " +
+                    "\n\nIf both cards have the same value, it is a tie."
+        };
+        int[] images = {
+                0,
+                R.drawable.blackjack_rules
+        };
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialogue_rules, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        TextView ruleTitle = dialogView.findViewById(R.id.rule_title);
+        TextView ruleDesc = dialogView.findViewById(R.id.rule_description);
+        ImageView ruleImage = dialogView.findViewById(R.id.rule_image);
+        Button btnNext = dialogView.findViewById(R.id.btn_next);
+        Button btnPrev = dialogView.findViewById(R.id.btn_prev);
+        Button btnClose = dialogView.findViewById(R.id.btn_close);
+
+        currentRulePage = 0;
+
+        Runnable updateUI = () -> {
+            ruleTitle.setText(titles[currentRulePage]);
+
+            if (descriptions[currentRulePage].isEmpty()) {
+                ruleDesc.setVisibility(View.GONE);
+            }
+            else {
+                ruleDesc.setVisibility(View.VISIBLE);
+                ruleDesc.setText(descriptions[currentRulePage]);
+            }
+
+            if (images[currentRulePage] == 0) {
+                ruleImage.setVisibility(View.GONE);
+            }
+            else {
+                ruleImage.setVisibility(View.VISIBLE);
+                ruleImage.setImageResource(images[currentRulePage]);
+            }
+            btnPrev.setVisibility(currentRulePage == 0 ? View.INVISIBLE : View.VISIBLE);
+
+            if (currentRulePage == 0) {
+                btnPrev.setVisibility(View.GONE);
+            }
+            else {
+                btnPrev.setVisibility(View.VISIBLE);
+            }
+
+            if (currentRulePage == titles.length - 1) {
+                btnNext.setVisibility(View.GONE);
+            }
+            else {
+                btnNext.setVisibility(View.VISIBLE);
+            }
+        };
+
+        btnNext.setOnClickListener(v -> {
+            currentRulePage++;
+            updateUI.run();
+        });
+
+        btnPrev.setOnClickListener(v -> {
+            currentRulePage--;
+            updateUI.run();
+        });
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        updateUI.run();
+        dialog.show();
     }
 
     private void updateCoinsText() {

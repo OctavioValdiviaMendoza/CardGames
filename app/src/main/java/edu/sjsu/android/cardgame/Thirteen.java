@@ -36,6 +36,7 @@ public class Thirteen extends AppCompatActivity {
     private TextView coinsText;
     private SharedPreferences prefs;
     private int coins;
+    private int currentRulePage;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -447,18 +448,97 @@ public class Thirteen extends AppCompatActivity {
     }
 
     private void showRules() {
-        new AlertDialog.Builder(this)
-                .setTitle("13 Rules")
-                .setMessage("Each player draws 13 cards.\n\n" +
-                        "Rank of cards goes 3 4 5 6 7 8 9 10 Jack Queen King Ace 2.\n\n" +
-                        "Rank of suits goes Spades Clubs Diamonds Hearts.\n\n" +
-                        "Your goal is to make a combination with either " +
-                        "single, double, triple, or a sequence.\n\n" +
-                        "When a combination is played, the other player must match.\n\n" +
-                        "You can choose to pass or play your cards.\n\n" +
-                        "First player to get rid of all cards wins.")
-                .setPositiveButton("OK", null)
-                .show();
+        String[] titles = {
+                "How to Play",
+                "Card Order",
+                "Playable Cards"
+        };
+        String[] descriptions = {
+                "All players start with 13 cards in their hand. " +
+                    "\n\nCards are ranked starting from 3 (Lowest) to 2 (highest). " +
+                    "If the ranks are tied, the suites will determine the hand is ranked higher. " +
+                    "\n\nCards can be played with a single card (Lowest order), a pair of cards, three of a kind, or in a sequence (Highest order)." +
+                    "\n\nIf the current play cannot be beaten, the player must pass their turn to the other player. " +
+                    "Once all players have had a turn, the round will end. " +
+                    "The next round will begin with the player who played last in the last round." +
+                    "The first player to get rid of all their cards will win",
+                "RANK ORDER: \n3 < 4 < 5 < 6 < 7 < 8 < 9 < 10 < J < Q < K < A < 2" +
+                    "\nSUITE ORDER: \nSpades < Clubs < Diamonds < Hearts",
+                "PAIR: 2 cards with the same rank" +
+                "\nTHREE OF A KIND: 3 cards with the same rank" +
+                "\nSEQUENCE: 3 or more cards that are sequentially ranked"
+        };
+        int[] images = {
+                0,
+                R.drawable.thirteen_rules_order,
+                R.drawable.thirteen_rules_playable,
+        };
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialogue_rules, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        TextView ruleTitle = dialogView.findViewById(R.id.rule_title);
+        TextView ruleDesc = dialogView.findViewById(R.id.rule_description);
+        ImageView ruleImage = dialogView.findViewById(R.id.rule_image);
+        Button btnNext = dialogView.findViewById(R.id.btn_next);
+        Button btnPrev = dialogView.findViewById(R.id.btn_prev);
+        Button btnClose = dialogView.findViewById(R.id.btn_close);
+
+        currentRulePage = 0;
+
+        Runnable updateUI = () -> {
+            ruleTitle.setText(titles[currentRulePage]);
+
+            if (descriptions[currentRulePage].isEmpty()) {
+                ruleDesc.setVisibility(View.GONE);
+            }
+            else {
+                ruleDesc.setVisibility(View.VISIBLE);
+                ruleDesc.setText(descriptions[currentRulePage]);
+            }
+
+            if (images[currentRulePage] == 0) {
+                ruleImage.setVisibility(View.GONE);
+            }
+            else {
+                ruleImage.setVisibility(View.VISIBLE);
+                ruleImage.setImageResource(images[currentRulePage]);
+            }
+            btnPrev.setVisibility(currentRulePage == 0 ? View.INVISIBLE : View.VISIBLE);
+
+            if (currentRulePage == 0) {
+                btnPrev.setVisibility(View.GONE);
+            }
+            else {
+                btnPrev.setVisibility(View.VISIBLE);
+            }
+
+            if (currentRulePage == titles.length - 1) {
+                btnNext.setVisibility(View.GONE);
+            }
+            else {
+                btnNext.setVisibility(View.VISIBLE);
+            }
+        };
+
+        btnNext.setOnClickListener(v -> {
+            currentRulePage++;
+            updateUI.run();
+        });
+
+        btnPrev.setOnClickListener(v -> {
+            currentRulePage--;
+            updateUI.run();
+        });
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        updateUI.run();
+        dialog.show();
     }
 
     private void updateCoinsText() {

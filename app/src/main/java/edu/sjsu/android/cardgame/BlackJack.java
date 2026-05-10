@@ -377,26 +377,26 @@ public class BlackJack extends AppCompatActivity {
     }
 
     private void showRules() {
-        // Define your rule data
-        String[] titles = {"Objective", "Hit", "Stand", "Dealer Rule"};
-        String[] descriptions = {
-                "Get as close to 21 as possible without going over.",
-                "Take another card to increase your total score.",
-                "Keep your current total and end your turn.",
-                "The dealer must draw cards until they reach at least 17."
+        String[] titles = {
+                "How to Play",
+                "Card Scores"
         };
-        // Replace these with your actual drawable IDs
+        String[] descriptions = {
+                "Press the DRAW button to get another card. " +
+                        "\n\nOnce you are satisfied with your score, press STAND. " +
+                        "\n\nThis will end your turn and the dealer will play." +
+                        "\n\nThe dealer must continue to draw until their score is at least 17. " +
+                        "\n\nThe hand with the highest score, without going over 21, will win.",
+                ""
+        };
         int[] images = {
-                R.drawable.background_tile,
-                R.drawable.background_tile,
-                R.drawable.background_tile,
-                R.drawable.background_tile
+                0,
+                R.drawable.blackjack_rules
         };
 
         View dialogView = getLayoutInflater().inflate(R.layout.dialogue_rules, null);
         AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
-        // Transparent background so the CardView corners look rounded
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
@@ -410,28 +410,38 @@ public class BlackJack extends AppCompatActivity {
 
         currentRulePage = 0;
 
-        // Helper to refresh UI
         Runnable updateUI = () -> {
             ruleTitle.setText(titles[currentRulePage]);
-            ruleDesc.setText(descriptions[currentRulePage]);
-            ruleImage.setImageResource(images[currentRulePage]);
 
+            if (descriptions[currentRulePage].isEmpty()) {
+                ruleDesc.setVisibility(View.GONE);
+            }
+            else {
+                ruleDesc.setVisibility(View.VISIBLE);
+                ruleDesc.setText(descriptions[currentRulePage]);
+            }
+
+            if (images[currentRulePage] == 0) {
+                ruleImage.setVisibility(View.GONE);
+            }
+            else {
+                ruleImage.setVisibility(View.VISIBLE);
+                ruleImage.setImageResource(images[currentRulePage]);
+            }
             btnPrev.setVisibility(currentRulePage == 0 ? View.INVISIBLE : View.VISIBLE);
 
             if (currentRulePage == 0) {
-                btnPrev.setVisibility(View.GONE); // Hide on first page
+                btnPrev.setVisibility(View.GONE);
             }
             else {
-                btnPrev.setVisibility(View.VISIBLE);   // Show on all other pages
+                btnPrev.setVisibility(View.VISIBLE);
             }
 
             if (currentRulePage == titles.length - 1) {
                 btnNext.setVisibility(View.GONE);
-                btnClose.setVisibility(View.VISIBLE);
             }
             else {
                 btnNext.setVisibility(View.VISIBLE);
-                btnClose.setVisibility(View.GONE);
             }
         };
 

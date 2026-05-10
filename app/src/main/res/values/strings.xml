@@ -6,10 +6,10 @@
     <string name="thirteen">♥ 13</string>
     <string name="war">♣ War</string>
     <string name="exit">Exit</string>
-    <string name="hit_button">Hit</string>
-    <string name="stand_button">Stand</string>
+    <string name="hit_button">HIT</string>
+    <string name="stand_button">STAND</string>
     <string name="menu">← Menu</string>
     <string name="rules">Rules</string>
-    <string name="pass">Pass</string>
-    <string name="play">Play</string>
+    <string name="pass">PASS</string>
+    <string name="play">PLAY</string>
 </resources>
