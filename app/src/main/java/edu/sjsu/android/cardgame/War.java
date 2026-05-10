@@ -24,10 +24,17 @@ public class War extends AppCompatActivity {
     private TextView coinsText;
     private SharedPreferences prefs;
     private int coins;
+    private String currentTheme;
+    private int themeColor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_war);
+
+        prefs = getSharedPreferences("game_data", MODE_PRIVATE);
+        currentTheme = prefs.getString("current_theme", "classic");
+        themeColor = prefs.getInt("current_theme_color", Color.TRANSPARENT);
 
         playerCardContainer = findViewById(R.id.player_card);
         dealerCardContainer = findViewById(R.id.dealer_card);
@@ -40,7 +47,6 @@ public class War extends AppCompatActivity {
 
         setupInitialCardBacks();
 
-        prefs = getSharedPreferences("game_data", MODE_PRIVATE);
         coins = prefs.getInt("coins", 100);
 
         updateCoinsText();
@@ -116,28 +122,57 @@ public class War extends AppCompatActivity {
         ImageView imgRankBot = container.findViewById(R.id.img_rank_bottom);
         ImageView imgSuitBot = container.findViewById(R.id.img_suit_bottom);
 
-        String theme = "classic";
+        String theme = currentTheme;
         String suit = card.getSuit();
         String rank = card.getRankLabel();
         String color = (suit.equals("hearts") || suit.equals("diamonds")) ? "red" : "black";
 
-        imgBase.setImageResource(getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName()));
+        int baseId = getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName());
+        if (baseId == 0) baseId = getResources().getIdentifier("classic_card_base", "drawable", getPackageName());
+        imgBase.setImageResource(baseId);
 
         int pipId;
-        if (theme.equals("classic") && (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
+        if ((theme.equals("classic") || theme.equals("blue") || theme.equals("green")) &&
+                (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
+
             pipId = getResources().getIdentifier(theme + "_" + rank + "_" + color, "drawable", getPackageName());
+            if (pipId == 0) pipId = getResources().getIdentifier("classic_" + rank + "_" + color, "drawable", getPackageName());
         } else {
             pipId = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
+            if (pipId == 0) pipId = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
         }
         imgPips.setImageResource(pipId);
 
         int rankId = getResources().getIdentifier(theme + "_" + rank + "_corner_" + color, "drawable", getPackageName());
+        if (rankId == 0) {
+            rankId = getResources().getIdentifier("classic_" + rank + "_corner_" + color, "drawable", getPackageName());
+        }
+
         int suitId = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
+        if (suitId == 0) {
+            suitId = getResources().getIdentifier("classic_" + suit + "_corner", "drawable", getPackageName());
+        }
 
         imgRankTop.setImageResource(rankId);
         imgRankBot.setImageResource(rankId);
         imgSuitTop.setImageResource(suitId);
         imgSuitBot.setImageResource(suitId);
+
+        if (theme.equals("blue") || theme.equals("green")) {
+            android.graphics.PorterDuff.Mode mode = android.graphics.PorterDuff.Mode.SRC_ATOP;
+            imgPips.setColorFilter(themeColor, mode);
+            imgRankTop.setColorFilter(themeColor, mode);
+            imgRankBot.setColorFilter(themeColor, mode);
+            imgSuitTop.setColorFilter(themeColor, mode);
+            imgSuitBot.setColorFilter(themeColor, mode);
+        }
+        else {
+            imgPips.clearColorFilter();
+            imgRankTop.clearColorFilter();
+            imgRankBot.clearColorFilter();
+            imgSuitTop.clearColorFilter();
+            imgSuitBot.clearColorFilter();
+        }
 
         // Ensure visibility
         imgPips.setVisibility(View.VISIBLE);
@@ -149,13 +184,20 @@ public class War extends AppCompatActivity {
         ImageView playerBase = playerCardContainer.findViewById(R.id.img_card_base);
         ImageView dealerBase = dealerCardContainer.findViewById(R.id.img_card_base);
 
-        if (playerBase != null) playerBase.setImageResource(R.drawable.cardback);
-        if (dealerBase != null) dealerBase.setImageResource(R.drawable.cardback);
+        if (playerBase != null) {
+            playerBase.setImageResource(R.drawable.cardback);
+            playerBase.clearColorFilter(); // Ensure no tint
+        }
+        if (dealerBase != null) {
+            dealerBase.setImageResource(R.drawable.cardback);
+            dealerBase.clearColorFilter(); // Ensure no tint
+        }
 
         // Hide pip/rank layers initially
         playerCardContainer.findViewById(R.id.img_card_pips).setVisibility(View.GONE);
         dealerCardContainer.findViewById(R.id.img_card_pips).setVisibility(View.GONE);
-    }
+        playerCardContainer.findViewById(R.id.img_rank_top).setVisibility(View.GONE);
+        dealerCardContainer.findViewById(R.id.img_rank_top).setVisibility(View.GONE);}
 
     private void showRules() {
         String[] titles = {

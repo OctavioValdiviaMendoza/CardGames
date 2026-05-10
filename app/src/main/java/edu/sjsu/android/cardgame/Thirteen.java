@@ -38,9 +38,16 @@ public class Thirteen extends AppCompatActivity {
     private int coins;
     private int currentRulePage;
 
+    private String currentTheme;
+    int themeColor;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thirteen);
+
+        prefs = getSharedPreferences("game_data", MODE_PRIVATE);
+        currentTheme = prefs.getString("current_theme", "classic");
+        themeColor = prefs.getInt("current_theme_color", Color.TRANSPARENT);
 
         coinsText = findViewById(R.id.coins_text);
         resultText = findViewById(R.id.result_text);
@@ -122,26 +129,46 @@ public class Thirteen extends AppCompatActivity {
         ImageView imgRankBot = cardView.findViewById(R.id.img_rank_bottom);
         ImageView imgSuitBot = cardView.findViewById(R.id.img_suit_bottom);
 
-        String theme = "classic";
+        String theme = currentTheme;
         String suit = card.getSuit();
         String rank = card.getRankLabel();
         String color = (suit.equals("hearts") || suit.equals("diamonds")) ? "red" : "black";
 
         if (card.isFaceUp()) {
-            imgBase.setImageResource(getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName()));
+            int baseId = getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName());
+            if (baseId == 0) {
+                baseId = getResources().getIdentifier("classic_card_base", "drawable", getPackageName());
+            }
+            imgBase.setImageResource(baseId);
 
             // Pips vs Face Card Logic
             int pipId;
-            if (theme.equals("classic") && (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
+            if ((theme.equals("classic") || theme.equals("blue") || theme.equals("green")) &&
+                    (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
+
                 pipId = getResources().getIdentifier(theme + "_" + rank + "_" + color, "drawable", getPackageName());
-            } else {
+                if (pipId == 0) {
+                    pipId = getResources().getIdentifier("classic_" + rank + "_" + color, "drawable", getPackageName());
+                }
+            }
+            else {
                 pipId = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
+                if (pipId == 0) {
+                    pipId = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
+                }
             }
             imgPips.setImageResource(pipId);
 
             // Corners
             int rankId = getResources().getIdentifier(theme + "_" + rank + "_corner_" + color, "drawable", getPackageName());
+            if (rankId == 0) {
+                rankId = getResources().getIdentifier("classic_" + rank + "_corner_" + color, "drawable", getPackageName());
+            }
+
             int suitId = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
+            if (suitId == 0) {
+                suitId = getResources().getIdentifier("classic_" + suit + "_corner", "drawable", getPackageName());
+            }
 
             imgRankTop.setImageResource(rankId);
             imgRankBot.setImageResource(rankId);
@@ -152,9 +179,29 @@ public class Thirteen extends AppCompatActivity {
             imgPips.setVisibility(View.VISIBLE);
             imgRankTop.setVisibility(View.VISIBLE);
             imgSuitTop.setVisibility(View.VISIBLE);
-        } else {
+            imgRankBot.setVisibility(View.VISIBLE);
+            imgSuitBot.setVisibility(View.VISIBLE);
+
+            if (theme.equals("blue") || theme.equals("green")) {
+                android.graphics.PorterDuff.Mode mode = android.graphics.PorterDuff.Mode.SRC_ATOP;
+                imgPips.setColorFilter(themeColor, mode);
+                imgRankTop.setColorFilter(themeColor, mode);
+                imgRankBot.setColorFilter(themeColor, mode);
+                imgSuitTop.setColorFilter(themeColor, mode);
+                imgSuitBot.setColorFilter(themeColor, mode);
+            }
+            else {
+                imgPips.clearColorFilter();
+                imgRankTop.clearColorFilter();
+                imgRankBot.clearColorFilter();
+                imgSuitTop.clearColorFilter();
+                imgSuitBot.clearColorFilter();
+            }
+        }
+        else {
             // Cardback state
             imgBase.setImageResource(R.drawable.cardback);
+            imgBase.clearColorFilter();
             imgPips.setVisibility(View.GONE);
             imgRankTop.setVisibility(View.GONE);
             imgSuitTop.setVisibility(View.GONE);
