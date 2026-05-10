@@ -43,6 +43,8 @@ public class BlackJack extends AppCompatActivity {
     private int suitID;
     private int rankID;
     private int currentRulePage;
+    private String currentTheme;
+    int themeColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,10 @@ public class BlackJack extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        prefs = getSharedPreferences("game_data", MODE_PRIVATE);
+        currentTheme = prefs.getString("current_theme", "classic");
+        themeColor = prefs.getInt("current_theme_color", Color.TRANSPARENT);
 
         playerScoreText = findViewById(R.id.player_score);
         dealerScoreText = findViewById(R.id.dealer_score);
@@ -147,32 +153,48 @@ public class BlackJack extends AppCompatActivity {
         ImageView imageRankBottom = cardView.findViewById(R.id.img_rank_bottom);
         ImageView imageSuitBottom = cardView.findViewById(R.id.img_suit_bottom);
 
-        String theme = "classic";
+        String theme = currentTheme;
         String suit = card.getSuit();
         String rank = card.getRankLabel();
 
         if (card.isFaceUp()) {
             // Base card
             baseCardID = getResources().getIdentifier(theme + "_card_base", "drawable", getPackageName());
+            if (baseCardID == 0) {
+                baseCardID = getResources().getIdentifier("classic_card_base", "drawable", getPackageName());
+            }
             imageBaseCard.setImageResource(baseCardID);
 
             // Symbols
             // Filename: "[theme]_[suit]_[rank]"
-            if (theme.equals("classic") && (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
+            if ((theme.equals("classic") || theme.equals("blue") || theme.equals("green")) &&
+                    (rank.equals("jack") || rank.equals("queen") || rank.equals("king"))) {
                 if (suit.equals("hearts") || suit.equals("diamonds")) {
                     // Filename: "[theme]_[rank]_red"
                     symbolID = getResources().getIdentifier(theme + "_" + rank + "_red", "drawable", getPackageName());
-                    if (symbolID == 0) android.util.Log.e("CardDebug", "FAILED to find Face Pip (Red): " + theme + "_" + rank + "_red");
+
+                    // Classic card symbol is used if file is not found
+                    if (symbolID == 0) {
+                        symbolID = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
+                    }
                 }
                 else {
                     // Filename: "[theme]_[rank]_black"
                     symbolID = getResources().getIdentifier(theme + "_" + rank + "_black", "drawable", getPackageName());
-                    if (symbolID == 0) android.util.Log.e("CardDebug", "FAILED to find Face Pip (Black): " + theme + "_" + rank + "_black");
+
+                    // Classic card symbol is used if file is not found
+                    if (symbolID == 0) {
+                        symbolID = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
+                    }
                 }
             }
             else {
                 symbolID = getResources().getIdentifier(theme + "_" + suit + "_" + rank, "drawable", getPackageName());
-                if (symbolID == 0) android.util.Log.e("CardDebug", "FAILED to find Standard Pip: " + theme + "_" + suit + "_" + rank);
+
+                // Classic card symbol is used if file is not found
+                if (symbolID == 0) {
+                    symbolID = getResources().getIdentifier("classic_" + suit + "_" + rank, "drawable", getPackageName());
+                }
             }
             imageSymbols.setImageResource(symbolID);
 
@@ -182,7 +204,6 @@ public class BlackJack extends AppCompatActivity {
                 if (suit.equals("hearts") || suit.equals("diamonds")) {
                     // Filename: "[theme]_[rank]_corner_red"
                     rankID = getResources().getIdentifier(theme + "_" + rank + "_corner_red", "drawable", getPackageName());
-                    if (rankID == 0) android.util.Log.e("CardDebug", "FAILED to find Rank (Red): " + theme + "_" + rank + "_corner_red");
                 }
                 else {
                     // Filename: "[theme]_[rank]_corner_black"
@@ -192,6 +213,11 @@ public class BlackJack extends AppCompatActivity {
             }
             else {
                 rankID = getResources().getIdentifier(theme + "_" + rank + "_corner", "drawable", getPackageName());
+
+                // Classic rank is used if file is not found
+                if (rankID == 0) {
+                    rankID = getResources().getIdentifier("classic_" + rank + "_corner_red", "drawable", getPackageName());
+                }
             }
             imageRankTop.setImageResource(rankID);
             imageRankBottom.setImageResource(rankID);
@@ -199,7 +225,9 @@ public class BlackJack extends AppCompatActivity {
             // Symbols (corner)
             // Filename: "[theme]_[suit]_corner"
             suitID = getResources().getIdentifier(theme + "_" + suit + "_corner", "drawable", getPackageName());
-            if (suitID == 0) android.util.Log.e("CardDebug", "FAILED to find Suit Corner: " + theme + "_" + suit + "_corner");
+            if (suitID == 0) {
+                suitID = getResources().getIdentifier("classic_" + suit + "_corner", "drawable", getPackageName());
+            }
             imageSuitTop.setImageResource(suitID);
             imageSuitBottom.setImageResource(suitID);
         }
@@ -211,6 +239,24 @@ public class BlackJack extends AppCompatActivity {
             imageSuitTop.setVisibility(View.GONE);
             imageRankBottom.setVisibility(View.GONE);
             imageSuitBottom.setVisibility(View.GONE);
+        }
+
+        // Color filters
+        if (theme.equals("blue") || theme.equals("green")) {
+            android.graphics.PorterDuff.Mode mode = android.graphics.PorterDuff.Mode.SRC_ATOP;
+            imageSymbols.setColorFilter(themeColor, mode);
+            imageRankTop.setColorFilter(themeColor, mode);
+            imageRankBottom.setColorFilter(themeColor, mode);
+            imageSuitTop.setColorFilter(themeColor, mode);
+            imageSuitBottom.setColorFilter(themeColor, mode);
+        }
+        else {
+            imageSymbols.clearColorFilter();
+            imageRankTop.clearColorFilter();
+            imageRankBottom.clearColorFilter();
+            imageSuitTop.clearColorFilter();
+            imageSuitBottom.clearColorFilter();
+            imageBaseCard.clearColorFilter();
         }
 
         // Layout Params

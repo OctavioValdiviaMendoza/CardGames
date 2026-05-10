@@ -1,5 +1,8 @@
 package edu.sjsu.android.cardgame;
 
+import android.content.Context;
+import android.graphics.Color;
+
 public class Card {
     private String suit;
     private String rank;
@@ -57,5 +60,10 @@ public class Card {
             case "king":  return "king";
             default:      return rank; // Returns "2", "3", ... "10"
         }
+    }
+
+    public static int getThemeColor(Context context) {
+        return context.getSharedPreferences("game_data", Context.MODE_PRIVATE)
+                .getInt("current_theme_color", Color.TRANSPARENT);
     }
 }

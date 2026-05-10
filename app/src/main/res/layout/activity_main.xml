@@ -84,6 +84,18 @@
                     android:layout_marginBottom="16dp" />
 
                 <Button
+                    android:id="@+id/btnShop"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Shop"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#EFBF04"
+                    android:layout_marginBottom="16dp" />
+
+                <Button
                     android:id="@+id/btnExit"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"

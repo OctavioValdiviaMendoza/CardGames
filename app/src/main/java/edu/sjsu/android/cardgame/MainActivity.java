@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnThirteen;
     private Button btnWar;
     private Button btnExit;
+    private Button btnShop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         btnThirteen = findViewById(R.id.btnThirteen);
         btnWar = findViewById(R.id.btnWar);
         btnExit = findViewById(R.id.btnExit);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        btnShop = findViewById(R.id.btnShop);
 
         new Thread(() -> {
             Deck preloadDeck = new Deck();
@@ -38,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
         });
         btnWar.setOnClickListener(v -> {
             Intent intent = new Intent(this, War.class);
+            startActivity(intent);
+        });
+        btnShop.setOnClickListener(v -> {
+            Intent intent = new Intent(this, Shop.class);
             startActivity(intent);
         });
         btnExit.setOnClickListener(v -> {
