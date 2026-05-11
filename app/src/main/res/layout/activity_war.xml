@@ -84,4 +84,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="40dp"/>
 
+    <TextView
+        android:id="@+id/pot_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pot: 0"
+        android:textColor="#FFEB3B"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/result_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

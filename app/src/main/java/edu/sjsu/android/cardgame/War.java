@@ -1,6 +1,7 @@
 package edu.sjsu.android.cardgame;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,6 +12,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class War extends AppCompatActivity {
 
@@ -26,6 +30,8 @@ public class War extends AppCompatActivity {
     private int coins;
     private String currentTheme;
     private int themeColor;
+    private List<Card> pot = new ArrayList<>();
+    private boolean isWarActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +75,8 @@ public class War extends AppCompatActivity {
     }
 
     private void playRound() {
+        drawButton.setEnabled(false); // Disable while animating
+
         Card playerCard = deck.draw();
         Card dealerCard = deck.draw();
 
@@ -78,40 +86,77 @@ public class War extends AppCompatActivity {
             dealerCard = deck.draw();
         }
 
-        // Show cards
+        pot.add(playerCard);
+        pot.add(dealerCard);
+
         setupCardVisuals(playerCardContainer, playerCard);
         setupCardVisuals(dealerCardContainer, dealerCard);
+        animateDraw();
 
-        //card animations
+        Card finalPlayerCard = playerCard;
+        Card finalDealerCard = dealerCard;
+        new Handler().postDelayed(() -> processResult(finalPlayerCard, finalDealerCard), 600);
+    }
+
+    private void processResult(Card pCard, Card dCard) {
+        // In War, 2 is usually lowest and Ace is highest.
+        // If your getValue() already handles this (e.g., Ace = 14), this works perfectly.
+        int pVal = pCard.getValue();
+        int dVal = dCard.getValue();
+
+        if (pVal > dVal) {
+            int winnings = 10 + (isWarActive ? pot.size() : 0);
+            resultText.setText("You WON!\n+" + winnings + " coins");
+            changeCoins(winnings);
+            resetWar();
+        }
+        else if (dVal > pVal) {
+            int loss = 10 + (isWarActive ? pot.size() : 0);
+            resultText.setText("You LOST!\n-" + loss + " coins");
+            changeCoins(-loss);
+            resetWar();
+        }
+        else {
+            // TIE! This is where the real War starts
+            isWarActive = true;
+            triggerWarSequence();
+        }
+    }
+
+    private void triggerWarSequence() {
+        resultText.setText("WAR!");
+        drawButton.setEnabled(false);
+
+        flipCard(playerCardContainer, () -> setupInitialCardBacks());
+        flipCard(dealerCardContainer, () -> setupInitialCardBacks());
+
+        for(int i = 0; i < 6; i++) {
+            Card burn = deck.draw();
+            if (burn != null) pot.add(burn);
+        }
+
+        new Handler().postDelayed(() -> {
+            setupInitialCardBacks();
+            resultText.setText("WAR!\n(Pot: " + pot.size() + " cards)");
+            drawButton.setEnabled(true);
+            drawButton.setText("Break The Tie");
+        }, 1000);
+    }
+    private void resetWar() {
+        pot.clear();
+        isWarActive = false;
+        drawButton.setEnabled(true);
+        drawButton.setText("DRAW CARDS");
+    }
+
+    private void animateDraw() {
         playerCardContainer.setTranslationY(500f);
         playerCardContainer.setAlpha(0f);
-        playerCardContainer
-                .animate()
-                .translationY(0f)
-                .alpha(1f)
-                .setDuration(400).start();
+        playerCardContainer.animate().translationY(0f).alpha(1f).setDuration(400).start();
 
         dealerCardContainer.setTranslationY(-500f);
         dealerCardContainer.setAlpha(0f);
-        dealerCardContainer.animate()
-                .translationY(0f)
-                .alpha(1f)
-                .setDuration(400)
-                .start();
-
-        int playerValue = playerCard.getValue();
-        int dealerValue = dealerCard.getValue();
-
-        // Determine winner
-        if (playerValue > dealerValue) {
-            resultText.setText("You Won!\n+10 coins");
-            changeCoins(10);
-        } else if (dealerValue > playerValue) {
-            resultText.setText("Dealer Won!\n-10 coins");
-            changeCoins(-10);
-        } else {
-            resultText.setText("War! It's a Tie!\nNo coins changed");
-        }
+        dealerCardContainer.animate().translationY(0f).alpha(1f).setDuration(400).start();
     }
 
     private void setupCardVisuals(View cardView, Card card) {
@@ -206,27 +251,40 @@ public class War extends AppCompatActivity {
 
         if (playerBase != null) {
             playerBase.setImageResource(R.drawable.cardback);
-            playerBase.clearColorFilter(); // Ensure no tint
+            playerBase.clearColorFilter();
         }
         if (dealerBase != null) {
             dealerBase.setImageResource(R.drawable.cardback);
-            dealerBase.clearColorFilter(); // Ensure no tint
+            dealerBase.clearColorFilter();
         }
 
-        // Hide pip/rank layers initially
-        playerCardContainer.findViewById(R.id.img_card_pips).setVisibility(View.GONE);
-        dealerCardContainer.findViewById(R.id.img_card_pips).setVisibility(View.GONE);
-        playerCardContainer.findViewById(R.id.img_rank_top).setVisibility(View.GONE);
-        dealerCardContainer.findViewById(R.id.img_rank_top).setVisibility(View.GONE);}
+        int[] layersToHide = {
+                R.id.img_card_pips,
+                R.id.img_rank_top,
+                R.id.img_rank_bottom,
+                R.id.img_suit_top,
+                R.id.img_suit_bottom
+        };
+
+        // 3. Loop through and hide them for both containers
+        for (int id : layersToHide) {
+            playerCardContainer.findViewById(id).setVisibility(View.GONE);
+            dealerCardContainer.findViewById(id).setVisibility(View.GONE);
+        }
+    }
 
     private void showRules() {
         String[] titles = {
-                "How to Play"
+                "How to Play",
+                "Declaring War"
         };
         String[] descriptions = {
                 "Each player draws one card." +
                     "\n\nThe higher card wins the round. " +
-                    "\n\nIf both cards have the same value, it is a tie."
+                    "\n\nIf both cards have the same value, it is a tie.",
+                "If both players draw the same rank, a war is declared." +
+                    "\n\nPlayers will continue to draw cards until the tie is broken. " +
+                    "Stakes are higher and more coins are at play during war."
         };
         int[] images = {
                 0,
@@ -338,6 +396,25 @@ public class War extends AppCompatActivity {
                             .scaleY(1f)
                             .setDuration(150)
                             .withEndAction(() -> coinsText.setTextColor(Color.WHITE))
+                            .start();
+                })
+                .start();
+    }
+
+    private void flipCard(View container, Runnable midFlipAction) {
+        container.animate()
+                .rotationY(90f)
+                .setDuration(250)
+                .withEndAction(() -> {
+                    if (midFlipAction != null) {
+                        midFlipAction.run();
+                    }
+
+                    container.setRotationY(-90f);
+
+                    container.animate()
+                            .rotationY(0f)
+                            .setDuration(250)
                             .start();
                 })
                 .start();
