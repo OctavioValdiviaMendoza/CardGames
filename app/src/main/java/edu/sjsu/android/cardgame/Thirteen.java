@@ -268,7 +268,6 @@ public class Thirteen extends AppCompatActivity {
             btnPlay.setEnabled(false);
 
             animateCardsToPile(playerHandLayout, cardsToPlay, true, () -> {
-                // 2. Clear the pile (fade out dealer's old cards)
                 currentPileLayout.animate().alpha(0f).setDuration(300).withEndAction(() -> {
                     currentPile = new ArrayList<>(cardsToPlay);
                     playerHand.removeAll(cardsToPlay);
@@ -278,7 +277,6 @@ public class Thirteen extends AppCompatActivity {
                     renderHand(currentPileLayout, currentPile, false);
                     currentPileLayout.setAlpha(1f);
 
-                    // 3. Wait 1 second, then fade out player cards and trigger dealer
                     new android.os.Handler().postDelayed(() -> {
                         currentPileLayout.animate().alpha(0f).setDuration(500).withEndAction(() -> {
                             dealerTurn();
@@ -319,7 +317,6 @@ public class Thirteen extends AppCompatActivity {
         return getThirteenValue(highestPlay) > getThirteenValue(highestPile);
     }
 
-    // Identifies Singles, Pairs, Triples, and Sequences
     private String getComboType(List<Card> cards) {
         int size = cards.size();
         if (size == 1) return "SINGLE";
@@ -357,28 +354,17 @@ public class Thirteen extends AppCompatActivity {
     private void dealerTurn() {
         if (dealerHand.isEmpty()) return;
 
-        List<Card> playToMake = new ArrayList<>();
+        List<Card> playToMake;
 
         if (currentPile.isEmpty()) {
-            playToMake.add(dealerHand.get(0));
+            playToMake = bestPlay(dealerHand);
         }
         else {
             String targetType = getComboType(currentPile);
             int targetSize = currentPile.size();
             int pileValue = getThirteenValue(currentPile.get(currentPile.size() - 1));
 
-            for (int i = 0; i <= dealerHand.size() - targetSize; i++) {
-                List<Card> potentialPlay = new ArrayList<>();
-                for (int j = i; j < dealerHand.size() && potentialPlay.size() < targetSize; j++) {
-                    potentialPlay.add(dealerHand.get(j));
-                }
-
-                if (getComboType(potentialPlay).equals(targetType) &&
-                        getThirteenValue(potentialPlay.get(potentialPlay.size()-1)) > pileValue) {
-                    playToMake.addAll(potentialPlay);
-                    break;
-                }
-            }
+            playToMake = beatPile(dealerHand, targetType, targetSize, pileValue);
         }
 
         if (!playToMake.isEmpty()) {
@@ -411,10 +397,83 @@ public class Thirteen extends AppCompatActivity {
             btnPlay.setEnabled(true);
             btnPass.setEnabled(true);
         }
+
         updateCardCounts();
         if (playerHand.isEmpty()) {
             endGame("You Won! +10 coins");
         }
+    }
+
+    // helper methods for dealer
+    private List<Card> bestPlay(List<Card> hand) {
+        Card lowestCard = hand.get(0);
+        int lowestRank = getRankValue(lowestCard);
+
+        List<Card> longestSeq = new ArrayList<>();
+        longestSeq.add(lowestCard);
+        int currentRank = lowestRank;
+
+        for (int i = 1; i < hand.size(); i++) {
+            int nextRank = getRankValue(hand.get(i));
+            if (nextRank == currentRank + 1 && nextRank != 15) {
+                longestSeq.add(hand.get(i));
+                currentRank = nextRank;
+            }
+        }
+        if (longestSeq.size() >= 3) {
+            return longestSeq;
+        }
+
+        List<Card> multiples = new ArrayList<>();
+        for (Card c : hand) {
+            if (getRankValue(c) == lowestRank) {
+                multiples.add(c);
+            }
+        }
+        return multiples;
+    }
+
+    private List<Card> beatPile(List<Card> hand, String targetType, int targetSize, int pileValue) {
+        List<Card> validPlay = new ArrayList<>();
+
+        if (targetType.equals("SINGLE") || targetType.equals("PAIR") || targetType.equals("TRIPLE") || targetType.equals("QUAD")) {
+            for (int i = 0; i <= hand.size() - targetSize; i++) {
+                List<Card> potential = new ArrayList<>();
+                int targetRank = getRankValue(hand.get(i));
+
+                for (Card c : hand) {
+                    if (getRankValue(c) == targetRank && potential.size() < targetSize) {
+                        potential.add(c);
+                    }
+                }
+
+                if (potential.size() == targetSize && getThirteenValue(potential.get(potential.size()-1)) > pileValue) {
+                    return potential;
+                }
+            }
+        } else if (targetType.equals("SEQUENCE")) {
+            for (int i = 0; i < hand.size(); i++) {
+                List<Card> potential = new ArrayList<>();
+                potential.add(hand.get(i));
+                int currentRank = getRankValue(hand.get(i));
+
+                for (int j = i + 1; j < hand.size(); j++) {
+                    int nextRank = getRankValue(hand.get(j));
+                    if (nextRank == currentRank + 1 && nextRank != 15) {
+                        potential.add(hand.get(j));
+                        currentRank = nextRank;
+                    }
+                    if (potential.size() == targetSize) {
+                        break;
+                    }
+                }
+
+                if (potential.size() == targetSize && getThirteenValue(potential.get(potential.size()-1)) > pileValue) {
+                    return potential;
+                }
+            }
+        }
+        return validPlay;
     }
 
     private int getThirteenValue(Card c) {
