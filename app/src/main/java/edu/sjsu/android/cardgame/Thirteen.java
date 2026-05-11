@@ -297,7 +297,7 @@ public class Thirteen extends AppCompatActivity {
     private void passTurn() {
         currentPile.clear();
         currentPileLayout.removeAllViews();
-        resultText.setText("You passed. Dealer's free turn.");
+        resultText.setText("You passed. Dealer's turn.");
         selectedCards.clear();
         renderHand(playerHandLayout, playerHand, false);
         dealerTurn();
@@ -412,6 +412,9 @@ public class Thirteen extends AppCompatActivity {
             btnPass.setEnabled(true);
         }
         updateCardCounts();
+        if (playerHand.isEmpty()) {
+            endGame("You Won! +10 coins");
+        }
     }
 
     private int getThirteenValue(Card c) {
