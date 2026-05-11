@@ -2,10 +2,13 @@
 
 A simple and interactive **Card game app** built in **Android Studio**. This project is designed to bring card games to mobile devices with an easy-to-use interface and smooth gameplay.
 
-# Backlog (Team)
+# APK
+Insert google drive link
+
+# Group 11 Backlog 
 https://docs.google.com/spreadsheets/d/1SNjqR1fdunVrIrveGRwISWv3dDw8EMh-zkdc3s8yrRY/edit?gid=0#gid=0
 
-# Final Report (Team)
+# Final Report
 https://docs.google.com/document/d/1N4FxgHcsZO1WT4UF8jLDBbBlf7-u8eCuXXCtXD3-d7w/edit?tab=t.0
 
 ## Features
