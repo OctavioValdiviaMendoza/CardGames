@@ -4,8 +4,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -15,14 +17,29 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class Shop extends AppCompatActivity {
-    String[] skinNames = {"Classic", "Blue", "Green"};
-    String[] skinIDs = {"classic", "blue", "green"};
+    String[] skinNames = {
+            "Classic",
+            "Blue",
+            "Green",
+            "Orange",
+            "Purple",
+            "Deluxe"};
+    String[] skinIDs = {
+            "classic",
+            "blue",
+            "green",
+            "orange",
+            "purple",
+            "deluxe"};
     int[] skinColors = {
             Color.TRANSPARENT,
             Color.parseColor("#880000FF"),
-            Color.parseColor("#8800FF00")
+            Color.parseColor("#8800FF00"),
+            Color.parseColor("#88FF8800"),
+            Color.parseColor("#88550088"),
+            Color.TRANSPARENT
     };
-    int[] skinPrices = {0, 0, 0};
+    int[] skinPrices = {0, 200, 200, 200, 200, 1000};
     int currentIndex = 0;
 
     SharedPreferences prefs;
@@ -56,17 +73,66 @@ public class Shop extends AppCompatActivity {
         boolean isOwned = prefs.getBoolean("owned_" + themeID, themeID.equals("classic"));
 
         ((TextView)findViewById(R.id.skin_name)).setText(skinNames[currentIndex]);
-        int resID = getResources().getIdentifier(themeID + "_card_base", "drawable", getPackageName());
-        ((ImageView)findViewById(R.id.skin_preview)).setImageResource(resID);
 
-        ImageView preview = findViewById(R.id.skin_preview);
-        preview.setImageResource(R.drawable.classic_card_base);
+        android.widget.FrameLayout cardContainer = findViewById(R.id.skin_preview);
+        cardContainer.removeAllViews();
+        View cardView = getLayoutInflater().inflate(R.layout.activity_card_view, cardContainer, true);
 
-        if (themeID.equals("classic")) {
-            preview.clearColorFilter();
+        ImageView imageBaseCard = cardView.findViewById(R.id.img_card_base);
+        ImageView imageSymbols = cardView.findViewById(R.id.img_card_pips);
+        ImageView imageRankTop = cardView.findViewById(R.id.img_rank_top);
+        ImageView imageSuitTop = cardView.findViewById(R.id.img_suit_top);
+        ImageView imageRankBottom = cardView.findViewById(R.id.img_rank_bottom);
+        ImageView imageSuitBottom = cardView.findViewById(R.id.img_suit_bottom);
+
+        int baseID = getResources().getIdentifier(themeID + "_card_base", "drawable", getPackageName());
+        if (baseID == 0) {
+            baseID = R.drawable.classic_card_base;
+        }
+        imageBaseCard.setImageResource(baseID);
+
+        int symbolID = getResources().getIdentifier(themeID + "_spades_ace", "drawable", getPackageName());
+        if (symbolID == 0) {
+            symbolID = R.drawable.classic_spades_ace;
+        }
+        imageSymbols.setImageResource(symbolID);
+
+        // Using black corners for Spades
+        int rankID = getResources().getIdentifier(themeID + "_ace_corner", "drawable", getPackageName());
+        if (rankID == 0) {
+            rankID = R.drawable.classic_ace_corner;
+        }
+        imageRankTop.setImageResource(rankID);
+        imageRankBottom.setImageResource(rankID);
+
+        int suitID = getResources().getIdentifier(themeID + "_spades_corner", "drawable", getPackageName());
+        if (suitID == 0) suitID = R.drawable.classic_spades_corner;
+        imageSuitTop.setImageResource(suitID);
+        imageSuitBottom.setImageResource(suitID);
+
+        imageSymbols.setVisibility(View.VISIBLE);
+        imageRankTop.setVisibility(View.VISIBLE);
+        imageSuitTop.setVisibility(View.VISIBLE);
+        imageRankBottom.setVisibility(View.VISIBLE);
+        imageSuitBottom.setVisibility(View.VISIBLE);
+
+        PorterDuff.Mode mode = PorterDuff.Mode.SRC_ATOP;
+        if (themeID.equals("blue") || themeID.equals("green") ||
+                themeID.equals("purple") || themeID.equals("orange")) {
+            int color = skinColors[currentIndex];
+            imageSymbols.setColorFilter(color, mode);
+            imageRankTop.setColorFilter(color, mode);
+            imageRankBottom.setColorFilter(color, mode);
+            imageSuitTop.setColorFilter(color, mode);
+            imageSuitBottom.setColorFilter(color, mode);
         }
         else {
-            preview.setColorFilter(skinColors[currentIndex], PorterDuff.Mode.SRC_ATOP);
+            imageSymbols.clearColorFilter();
+            imageRankTop.clearColorFilter();
+            imageRankBottom.clearColorFilter();
+            imageSuitTop.clearColorFilter();
+            imageSuitBottom.clearColorFilter();
+            imageBaseCard.clearColorFilter();
         }
 
         Button btnAction = findViewById(R.id.btn_select);

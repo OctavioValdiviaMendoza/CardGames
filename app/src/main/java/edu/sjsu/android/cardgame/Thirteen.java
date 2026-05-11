@@ -197,7 +197,8 @@ public class Thirteen extends AppCompatActivity {
                 imageSuitTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
                 imageSuitBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
             }
-            else if (theme.equals("blue") || theme.equals("green")) {
+            else if (theme.equals("blue") || theme.equals("green") ||
+                    theme.equals("purple") || theme.equals("orange")) {
                 android.graphics.PorterDuff.Mode mode = android.graphics.PorterDuff.Mode.SRC_ATOP;
                 imageSymbols.setColorFilter(themeColor, mode);
                 imageRankTop.setColorFilter(themeColor, mode);
