@@ -253,93 +253,45 @@ public class Thirteen extends AppCompatActivity {
             cardView.setLayoutParams(params);
             layout.addView(cardView);
         }
-
-        /**for (Card card : hand) {
-            ImageView cardView = new ImageView(this);
-
-            if (isDealer && layout == dealerHandLayout) {
-                cardView.setImageResource(R.drawable.cardback);
-            } else {
-                cardView.setImageResource(card.getCardID());
-
-                // Only allow clicking if it's in the player's hand
-                if (layout == playerHandLayout) {
-                    cardView.setOnClickListener(v -> {
-                        if (selectedCards.contains(card)) {
-                            selectedCards.remove(card);
-                            cardView.setTranslationY(0f);
-                        } else {
-                            selectedCards.add(card);
-                            cardView.setTranslationY(-50f);
-                        }
-                    });
-                }
-            }
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(200, 300);
-            if (layout.getChildCount() > 0) {
-                params.setMargins(-140, 0, 0, 0);
-            }
-            cardView.setLayoutParams(params);
-            layout.addView(cardView);
-        }*/
     }
 
 
     private void playSelectedCards() {
-        if (selectedCards.isEmpty()) return;
-        sortHand(selectedCards);
-
-        if (isValidPlay(selectedCards)) {
-            currentPile = new ArrayList<>(selectedCards);
-            playerHand.removeAll(selectedCards);
-            selectedCards.clear();
-
-            renderHand(playerHandLayout, playerHand, false);
-
-            for(Card c : currentPile) c.setFaceUp(true);
-            renderHand(currentPileLayout, currentPile, false);
-
-            updateCardCounts();
-
-            if (playerHand.isEmpty()) {
-                endGame("You Won! +10 coins");
-            } else {
-                dealerTurn();
-            }
-        } else {
-            Toast.makeText(this, "Invalid Play!", Toast.LENGTH_SHORT).show();
-            selectedCards.clear();
-            renderHand(playerHandLayout, playerHand, false);
-        }
-    }
-    /**private void playSelectedCards() {
         if (selectedCards.isEmpty()) {
             return;
         }
-
+        List<Card> cardsToPlay = new ArrayList<>(selectedCards);
         sortHand(selectedCards);
 
         if (isValidPlay(selectedCards)) {
-            currentPile = new ArrayList<>(selectedCards);
-            playerHand.removeAll(selectedCards);
-            selectedCards.clear();
+            btnPlay.setEnabled(false);
 
-            renderHand(playerHandLayout, playerHand, false);
-            renderHand(currentPileLayout, currentPile, false);
-            updateCardCounts();
+            animateCardsToPile(playerHandLayout, cardsToPlay, true, () -> {
+                // 2. Clear the pile (fade out dealer's old cards)
+                currentPileLayout.animate().alpha(0f).setDuration(300).withEndAction(() -> {
+                    currentPile = new ArrayList<>(cardsToPlay);
+                    playerHand.removeAll(cardsToPlay);
+                    selectedCards.clear();
 
-            if (playerHand.isEmpty()) {
-                endGame("You Won! +10 coins");
-            } else {
-                dealerTurn();
-            }
-        } else {
-            Toast.makeText(this, "Invalid Play! Matches pile type/size and beat highest card.", Toast.LENGTH_SHORT).show();
-            selectedCards.clear();
-            renderHand(playerHandLayout, playerHand, false);
+                    renderHand(playerHandLayout, playerHand, false);
+                    renderHand(currentPileLayout, currentPile, false);
+                    currentPileLayout.setAlpha(1f);
+
+                    // 3. Wait 1 second, then fade out player cards and trigger dealer
+                    new android.os.Handler().postDelayed(() -> {
+                        currentPileLayout.animate().alpha(0f).setDuration(500).withEndAction(() -> {
+                            dealerTurn();
+                        }).start();
+                    }, 1000);
+                }).start();
+            });
         }
-    }*/
+        else {
+            Toast.makeText(this, "Invalid Play!", Toast.LENGTH_SHORT).show();
+            renderHand(playerHandLayout, playerHand, false);
+            selectedCards.clear();
+        }
+    }
 
     private void passTurn() {
         currentPile.clear();
@@ -350,7 +302,6 @@ public class Thirteen extends AppCompatActivity {
         dealerTurn();
     }
 
-
     private boolean isValidPlay(List<Card> play) {
         String playType = getComboType(play);
         if (playType.equals("INVALID")) return false;
@@ -359,7 +310,6 @@ public class Thirteen extends AppCompatActivity {
 
         String pileType = getComboType(currentPile);
 
-        // Must match combo type and size (3-card sequence beats 3-card sequence)
         if (!playType.equals(pileType) || play.size() != currentPile.size()) return false;
 
         Card highestPlay = play.get(play.size() - 1);
@@ -386,11 +336,10 @@ public class Thirteen extends AppCompatActivity {
             if (size == 4) return "QUAD";
         }
 
-        // Check for Sequence (Straight)
         if (size >= 3) {
             boolean isSeq = true;
             for (Card c : cards) {
-                if (getRankValue(c) == 15) return "INVALID"; // 2s cannot be in a sequence
+                if (getRankValue(c) == 15) return "INVALID";
             }
             for (int i = 0; i < size - 1; i++) {
                 if (getRankValue(cards.get(i + 1)) - getRankValue(cards.get(i)) != 1) {
@@ -410,22 +359,19 @@ public class Thirteen extends AppCompatActivity {
         List<Card> playToMake = new ArrayList<>();
 
         if (currentPile.isEmpty()) {
-            playToMake.add(dealerHand.get(0)); // Dealer plays lowest card on free turn
-        } else {
+            playToMake.add(dealerHand.get(0));
+        }
+        else {
             String targetType = getComboType(currentPile);
             int targetSize = currentPile.size();
             int pileValue = getThirteenValue(currentPile.get(currentPile.size() - 1));
 
-            // Basic Dealer AI: Tries to find a combination that matches size and beats the value
-            // (Uses a brute-force combination check to keep logic contained)
             for (int i = 0; i <= dealerHand.size() - targetSize; i++) {
                 List<Card> potentialPlay = new ArrayList<>();
                 for (int j = i; j < dealerHand.size() && potentialPlay.size() < targetSize; j++) {
                     potentialPlay.add(dealerHand.get(j));
                 }
 
-                // If it doesn't match perfectly sequentially, we try jumping over cards
-                // If it's a valid play, dealer makes it.
                 if (getComboType(potentialPlay).equals(targetType) &&
                         getThirteenValue(potentialPlay.get(potentialPlay.size()-1)) > pileValue) {
                     playToMake.addAll(potentialPlay);
@@ -435,21 +381,35 @@ public class Thirteen extends AppCompatActivity {
         }
 
         if (!playToMake.isEmpty()) {
-            currentPile = new ArrayList<>(playToMake);
-            dealerHand.removeAll(playToMake);
-            resultText.setText("Dealer played " + playToMake.size() + " card(s)");
-            renderHand(currentPileLayout, currentPile, false); // Show dealer's play in center!
+            animateCardsToPile(dealerHandLayout, playToMake, false, () -> {
+                currentPile = new ArrayList<>(playToMake);
+                dealerHand.removeAll(playToMake);
 
-            if (dealerHand.isEmpty()) {
-                endGame("Dealer Won! -10 coins");
-            }
-        } else {
+                currentPileLayout.setAlpha(1f);
+                currentPileLayout.removeAllViews();
+                renderHand(currentPileLayout, currentPile, false);
+
+                renderHand(dealerHandLayout, dealerHand, true);
+
+                resultText.setText("Dealer played " + playToMake.size() + " card(s)");
+                updateCardCounts();
+
+                if (dealerHand.isEmpty()) {
+                    endGame("Dealer Won! -10 coins");
+                } else {
+                    btnPlay.setEnabled(true);
+                    btnPass.setEnabled(true);
+                }
+            });
+        }
+        else {
             currentPile.clear();
             currentPileLayout.removeAllViews();
-            resultText.setText("Dealer passed. Your free turn.");
+            renderHand(dealerHandLayout, dealerHand, true);
+            resultText.setText("Dealer passed. It's your turn");
+            btnPlay.setEnabled(true);
+            btnPass.setEnabled(true);
         }
-
-        renderHand(dealerHandLayout, dealerHand, true);
         updateCardCounts();
     }
 
@@ -644,5 +604,63 @@ public class Thirteen extends AppCompatActivity {
                             .start();
                 })
                 .start();
+    }
+
+    private void animateCardsToPile(LinearLayout sourceLayout, List<Card> cardsToAnimate, boolean isPlayer, Runnable onComplete) {
+        currentPileLayout.post(() -> {
+            int[] pileLocation = new int[2];
+            currentPileLayout.getLocationOnScreen(pileLocation);
+
+            int totalToAnimate = cardsToAnimate.size();
+
+            View firstCard = sourceLayout.getChildAt(0);
+            int cardWidth = (firstCard != null) ? firstCard.getWidth() : 200;
+            int cardHeight = (firstCard != null) ? firstCard.getHeight() : 300;
+
+            int cardSpacing = cardWidth - 140;
+
+            int totalOccupiedWidth = cardWidth + ((totalToAnimate - 1) * cardSpacing);
+            float horizontalOffset = (currentPileLayout.getWidth() - totalOccupiedWidth) / 2f;
+            float verticalOffset = (currentPileLayout.getHeight() - cardHeight) / 2f;
+
+            int cardsFound = 0;
+            for (int i = 0; i < sourceLayout.getChildCount(); i++) {
+                View cardView = sourceLayout.getChildAt(i);
+
+                boolean shouldAnimate = isPlayer ? (cardView.getTranslationY() == -50f) : (cardsFound < totalToAnimate);
+
+                if (shouldAnimate) {
+                    int cardIndexInPlay = cardsFound;
+                    cardsFound++;
+
+                    int[] cardLocation = new int[2];
+                    cardView.getLocationOnScreen(cardLocation);
+
+                    float targetX = pileLocation[0] + horizontalOffset + (cardIndexInPlay * cardSpacing);
+                    float targetY = pileLocation[1] + verticalOffset;
+                    float deltaX = targetX - cardLocation[0];
+                    float deltaY = targetY - cardLocation[1];
+
+                    if (!isPlayer) {
+                        Card cardData = cardsToAnimate.get(cardIndexInPlay);
+                        cardData.setFaceUp(true);
+                        setupCardVisuals(cardView, cardData);
+                    }
+
+                    final int finalCardsFound = cardsFound;
+                    cardView.animate()
+                            .translationX(deltaX)
+                            .translationY(deltaY)
+                            .alpha(isPlayer ? 0.9f : 1.0f)
+                            .setDuration(500)
+                            .withEndAction(() -> {
+                                if (finalCardsFound == totalToAnimate) {
+                                    if (onComplete != null) onComplete.run();
+                                }
+                            })
+                            .start();
+                }
+            }
+        });
     }
 }

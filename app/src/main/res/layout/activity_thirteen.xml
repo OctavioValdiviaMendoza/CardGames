@@ -5,7 +5,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2D6A4F">
+    android:background="#2D6A4F"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
 
     <Button
         android:id="@+id/btn_back_menu"
@@ -51,6 +54,9 @@
         android:layout_marginTop="144dp"
         android:orientation="horizontal"
         android:padding="8dp"
+        android:gravity="center"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,9 +64,12 @@
 
     <LinearLayout
         android:id="@+id/current_pile"
-        android:layout_width="wrap_content"
-        android:layout_height="150dp"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
         android:orientation="horizontal"
+        android:gravity="center"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/dealer_hand"
         app:layout_constraintBottom_toTopOf="@id/player_hand"
         app:layout_constraintStart_toStartOf="parent"
@@ -112,16 +121,19 @@
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@id/player_hand"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="20dp"/>
 
     <LinearLayout
         android:id="@+id/player_hand"
         android:layout_width="wrap_content"
-        android:layout_height="150dp"
+        android:layout_height="190dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"
+        android:clipChildren="false"
+        android:clipToPadding="false"/>
 
     <LinearLayout
         android:id="@+id/buttons"
