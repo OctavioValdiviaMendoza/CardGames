@@ -67,3 +67,23 @@ War is a card game where you go head to head to see which card is higher.
 - **Platform:** Android
 - **UI:** XML layouts
 - **Logic:** Object-oriented game design
+
+## Project Structure
+
+```plaintext
+CardGameApp/
+│── app/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/example/cardgameapp/
+│   │   │   │   ├── MainActivity
+│   │   │   │   ├── GameManager
+│   │   │   │   ├── Deck
+│   │   │   │   ├── Card
+│   │   │   │   ├── Player
+│   │   │   │   └── Dealer
+│   │   │   ├── res/
+│   │   │   │   ├── layout/
+│   │   │   │   ├── drawable/
+│   │   │   │   └── values/
+│── README.md
