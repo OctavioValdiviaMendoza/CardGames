@@ -247,9 +247,26 @@ public class Thirteen extends AppCompatActivity {
                 });
             }
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(200, 300);
+            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+
+            int cardWidth;
+            int cardHeight;
+            int overlap;
+
+            if (layout == playerHandLayout || layout == dealerHandLayout) {
+                cardWidth = (int) (screenWidth * 0.16);
+                cardHeight = (int) (cardWidth * 1.5);
+                overlap = (int) (-cardWidth * 0.70);
+            } else {
+                cardWidth = (int) (screenWidth * 0.22);
+                cardHeight = (int) (cardWidth * 1.5);
+                overlap = (int) (-cardWidth * 0.45);
+            }
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(cardWidth, cardHeight);
+
             if (layout.getChildCount() > 0) {
-                params.setMargins(-140, 0, 0, 0);
+                params.setMargins(overlap, 0, 0, 0);
             }
             cardView.setLayoutParams(params);
             layout.addView(cardView);
@@ -680,7 +697,7 @@ public class Thirteen extends AppCompatActivity {
             int cardWidth = (firstCard != null) ? firstCard.getWidth() : 200;
             int cardHeight = (firstCard != null) ? firstCard.getHeight() : 300;
 
-            int cardSpacing = cardWidth - 140;
+            int cardSpacing = (int) (cardWidth * 0.30);
 
             int totalOccupiedWidth = cardWidth + ((totalToAnimate - 1) * cardSpacing);
             float horizontalOffset = (currentPileLayout.getWidth() - totalOccupiedWidth) / 2f;

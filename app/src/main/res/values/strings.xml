@@ -12,4 +12,8 @@
     <string name="rules">Rules</string>
     <string name="pass">PASS</string>
     <string name="play">PLAY</string>
+    <string name="coins_100">Coins: 100</string>
+    <string name="dealer_0">Dealer: 0</string>
+    <string name="player_0">Player: 0</string>
+    <string name="play_again">Play Again</string>
 </resources>

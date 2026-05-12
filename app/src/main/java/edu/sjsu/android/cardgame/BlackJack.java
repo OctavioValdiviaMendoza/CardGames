@@ -214,6 +214,7 @@ public class BlackJack extends AppCompatActivity {
             imageRankTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
             imageRankBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
             imageSuitTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
+
             imageSuitBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
         }
         else if (theme.equals("blue") || theme.equals("green") ||
@@ -235,10 +236,18 @@ public class BlackJack extends AppCompatActivity {
         }
 
         // Layout Params
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(250, 350);
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+
+        int cardWidth = (int) (screenWidth * 0.22);
+        int cardHeight = (int) (cardWidth * 1.4);
+        int overlap = (int) (-cardWidth * 0.4);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(cardWidth, cardHeight);
+
         if (index > 0) {
-            params.setMargins(-100, 0, 0, 0);
+            params.setMargins(overlap, 0, 0, 0);
         }
+
         cardView.setLayoutParams(params);
 
         // Add to UI

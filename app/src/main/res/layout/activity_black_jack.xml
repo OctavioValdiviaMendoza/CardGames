@@ -5,140 +5,157 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BlackJack"
-    android:background="#2D6A4F">
+    android:background="#2D6A4F"
+    tools:context=".BlackJack">
 
     <Button
         android:id="@+id/btn_back_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/menu"
-        android:layout_margin="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         android:backgroundTint="#1B4332"
+        android:text="@string/menu"
         android:textColor="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/coins_text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Coins: 100"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/coins_100"
+        android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/btn_back_menu"
+        app:layout_constraintEnd_toStartOf="@id/btn_rules"
         app:layout_constraintStart_toEndOf="@id/btn_back_menu"
-        app:layout_constraintEnd_toStartOf="@id/btn_rules"/>
+        app:layout_constraintTop_toTopOf="@id/btn_back_menu" />
 
     <Button
         android:id="@+id/btn_rules"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/rules"
-        android:layout_margin="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
         android:backgroundTint="#1B4332"
+        android:text="@string/rules"
         android:textColor="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/dealer_hand"
         android:layout_width="wrap_content"
-        android:layout_height="150dp"
-        android:layout_marginTop="144dp"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/result_text"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@android:color/white"
-        android:textSize="22sp"
+        android:layout_marginTop="24dp"
         android:gravity="center"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/player_score"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintBottom_toTopOf="@id/score_result_box"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dealer_hand" />
+        app:layout_constraintTop_toBottomOf="@id/btn_back_menu"
+        app:layout_constraintVertical_chainStyle="spread" />
 
-    <Button
-        android:id="@+id/btn_play_again"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/score_result_box"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Play Again"
-        android:visibility="gone"
-        android:backgroundTint="#1B4332"
-        android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@id/result_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-
-    <TextView
-        android:id="@+id/dealer_score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dealer: 0"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@id/dealer_hand"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <TextView
-        android:id="@+id/player_score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Player: 0"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
         app:layout_constraintBottom_toTopOf="@id/player_hand"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/dealer_hand">
+
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/dealer_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/dealer_0"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/player_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/player_0"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/btn_play_again"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#1B4332"
+            android:text="@string/play_again"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/player_hand"
         android:layout_width="wrap_content"
-        android:layout_height="150dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="4dp"
         app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="horizontal" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/score_result_box" />
 
     <LinearLayout
-    android:id="@+id/buttons"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent">
+        android:id="@+id/buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/btn_hit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
-            android:text="@string/hit_button"
-            android:backgroundTint="#1B4332"/>
+            android:backgroundTint="#1B4332"
+            android:text="@string/hit_button" />
 
         <Button
             android:id="@+id/btn_stand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stand_button"
-            android:backgroundTint="#1B4332"/>
+            android:backgroundTint="#1B4332"
+            android:text="@string/stand_button" />
 
     </LinearLayout>
 
