@@ -3,7 +3,7 @@
 A simple and interactive **Card game app** built in **Android Studio**. This project is designed to bring card games to mobile devices with an easy-to-use interface and smooth gameplay.
 
 # APK
-Insert google drive link
+https://drive.google.com/file/d/1J7DnJhO0x8eWhRfQQ38jGdiv_PUG3tp6/view?usp=sharing
 
 # Group 11 Backlog 
 https://docs.google.com/spreadsheets/d/1SNjqR1fdunVrIrveGRwISWv3dDw8EMh-zkdc3s8yrRY/edit?gid=0#gid=0
@@ -67,23 +67,3 @@ War is a card game where you go head to head to see which card is higher.
 - **Platform:** Android
 - **UI:** XML layouts
 - **Logic:** Object-oriented game design
-
-## Project Structure
-
-```plaintext
-CardGameApp/
-│── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/example/cardgameapp/
-│   │   │   │   ├── MainActivity
-│   │   │   │   ├── GameManager
-│   │   │   │   ├── Deck
-│   │   │   │   ├── Card
-│   │   │   │   ├── Player
-│   │   │   │   └── Dealer
-│   │   │   ├── res/
-│   │   │   │   ├── layout/
-│   │   │   │   ├── drawable/
-│   │   │   │   └── values/
-│── README.md
