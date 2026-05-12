@@ -4,7 +4,11 @@
     <application
         android:allowBackup="true"
         android:supportsRtl="true"
+        android:label="@string/card_games"
+        android:icon="@mipmap/app_icon"
+        android:roundIcon="@mipmap/app_icon_round"
         android:theme="@style/Theme.CardGame">
+
         <activity
             android:name=".Shop"
             android:exported="false" />
