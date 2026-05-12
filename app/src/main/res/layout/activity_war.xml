@@ -7,7 +7,7 @@
     android:background="#2D6A4F">
 
     <Button
-        android:id="@+id/btn_back_menu"
+        android:id="@+id/button_back_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -29,13 +29,13 @@
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/btn_back_menu"
-        app:layout_constraintEnd_toStartOf="@id/btn_rules"
-        app:layout_constraintStart_toEndOf="@id/btn_back_menu"
-        app:layout_constraintTop_toTopOf="@id/btn_back_menu" />
+        app:layout_constraintBottom_toBottomOf="@id/button_back_menu"
+        app:layout_constraintEnd_toStartOf="@id/button_rules"
+        app:layout_constraintStart_toEndOf="@id/button_back_menu"
+        app:layout_constraintTop_toTopOf="@id/button_back_menu" />
 
     <Button
-        android:id="@+id/btn_rules"
+        android:id="@+id/button_rules"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -43,7 +43,7 @@
         android:backgroundTint="#1B4332"
         android:text="@string/rules"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="@id/btn_back_menu"
+        app:layout_constraintBottom_toBottomOf="@id/button_back_menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,7 +57,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_back_menu"
+        app:layout_constraintTop_toBottomOf="@id/button_back_menu"
         app:layout_constraintVertical_chainStyle="spread" />
 
     <TextView
@@ -91,7 +91,7 @@
         android:id="@+id/player_card"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/draw_button"
+        app:layout_constraintBottom_toTopOf="@id/button_draw"
         app:layout_constraintDimensionRatio="5:7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.24"
@@ -99,7 +99,7 @@
         app:layout_constraintTop_toBottomOf="@id/result_text" />
 
     <Button
-        android:id="@+id/draw_button"
+        android:id="@+id/button_draw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="28dp"

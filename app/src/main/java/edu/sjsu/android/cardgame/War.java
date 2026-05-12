@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,7 +21,7 @@ public class War extends AppCompatActivity {
     private View playerCardContainer;
     private View dealerCardContainer;
     private TextView resultText;
-    private Button drawButton;
+    private Button buttonDraw;
     private int currentRulePage;
 
     private TextView coinsText;
@@ -48,7 +47,7 @@ public class War extends AppCompatActivity {
         getLayoutInflater().inflate(R.layout.activity_card_view, (android.view.ViewGroup) dealerCardContainer, true);
 
         resultText = findViewById(R.id.result_text);
-        drawButton = findViewById(R.id.draw_button);
+        buttonDraw = findViewById(R.id.button_draw);
         coinsText = findViewById(R.id.coins_text);
 
         setupInitialCardBacks();
@@ -64,18 +63,18 @@ public class War extends AppCompatActivity {
             deck.reset();
         }
 
-        drawButton.setOnClickListener(v -> playRound());
-        Button btnBack = findViewById(R.id.btn_back_menu);
+        buttonDraw.setOnClickListener(v -> playRound());
+        Button btnBack = findViewById(R.id.button_back_menu);
 
         btnBack.setOnClickListener(v -> finish());
 
-        Button btnRules = findViewById(R.id.btn_rules);
+        Button btnRules = findViewById(R.id.button_rules);
 
         btnRules.setOnClickListener(v -> showRules());
     }
 
     private void playRound() {
-        drawButton.setEnabled(false); // Disable while animating
+        buttonDraw.setEnabled(false); // Disable while animating
 
         Card playerCard = deck.draw();
         Card dealerCard = deck.draw();
@@ -98,26 +97,23 @@ public class War extends AppCompatActivity {
         new Handler().postDelayed(() -> processResult(finalPlayerCard, finalDealerCard), 600);
     }
 
-    private void processResult(Card pCard, Card dCard) {
-        // In War, 2 is usually lowest and Ace is highest.
-        // If your getValue() already handles this (e.g., Ace = 14), this works perfectly.
-        int pVal = pCard.getValue();
-        int dVal = dCard.getValue();
+    private void processResult(Card playerCard, Card dealerCard) {
+        int playerScore = playerCard.getValue();
+        int dealerScore = dealerCard.getValue();
 
-        if (pVal > dVal) {
+        if (playerScore > dealerScore) {
             int winnings = 10 + (isWarActive ? pot.size() : 0);
-            resultText.setText("You WON!\n+" + winnings + " coins");
+            resultText.setText(R.string.win);
             changeCoins(winnings);
             resetWar();
         }
-        else if (dVal > pVal) {
+        else if (dealerScore > playerScore) {
             int loss = 10 + (isWarActive ? pot.size() : 0);
-            resultText.setText("You LOST!\n-" + loss + " coins");
+            resultText.setText(R.string.lose);
             changeCoins(-loss);
             resetWar();
         }
         else {
-            // TIE! This is where the real War starts
             isWarActive = true;
             triggerWarSequence();
         }
@@ -125,7 +121,7 @@ public class War extends AppCompatActivity {
 
     private void triggerWarSequence() {
         resultText.setText("WAR!");
-        drawButton.setEnabled(false);
+        buttonDraw.setEnabled(false);
 
         flipCard(playerCardContainer, () -> setupInitialCardBacks());
         flipCard(dealerCardContainer, () -> setupInitialCardBacks());
@@ -138,15 +134,15 @@ public class War extends AppCompatActivity {
         new Handler().postDelayed(() -> {
             setupInitialCardBacks();
             resultText.setText("WAR!\n(Pot: " + pot.size() + " cards)");
-            drawButton.setEnabled(true);
-            drawButton.setText("Break The Tie");
+            buttonDraw.setEnabled(true);
+            buttonDraw.setText("Break The Tie");
         }, 1000);
     }
     private void resetWar() {
         pot.clear();
         isWarActive = false;
-        drawButton.setEnabled(true);
-        drawButton.setText("DRAW CARDS");
+        buttonDraw.setEnabled(true);
+        buttonDraw.setText("DRAW CARDS");
     }
 
     private void animateDraw() {
@@ -165,12 +161,12 @@ public class War extends AppCompatActivity {
         int suitID;
         int rankID;
 
-        ImageView imageBaseCard = cardView.findViewById(R.id.img_card_base);
-        ImageView imageSymbols = cardView.findViewById(R.id.img_card_pips);
-        ImageView imageRankTop = cardView.findViewById(R.id.img_rank_top);
-        ImageView imageSuitTop = cardView.findViewById(R.id.img_suit_top);
-        ImageView imageRankBottom = cardView.findViewById(R.id.img_rank_bottom);
-        ImageView imageSuitBottom = cardView.findViewById(R.id.img_suit_bottom);
+        ImageView imageBaseCard = cardView.findViewById(R.id.image_card_base);
+        ImageView imageSymbols = cardView.findViewById(R.id.image_card_symbols);
+        ImageView imageRankTop = cardView.findViewById(R.id.image_rank_top);
+        ImageView imageSuitTop = cardView.findViewById(R.id.image_suit_top);
+        ImageView imageRankBottom = cardView.findViewById(R.id.image_rank_bottom);
+        ImageView imageSuitBottom = cardView.findViewById(R.id.image_suit_bottom);
 
         String theme = currentTheme;
         String suit = card.getSuit();
@@ -240,34 +236,42 @@ public class War extends AppCompatActivity {
             imageSuitBottom.clearColorFilter();
         }
 
-        // Ensure visibility
         imageSymbols.setVisibility(View.VISIBLE);
         imageRankTop.setVisibility(View.VISIBLE);
         imageRankBottom.setVisibility(View.VISIBLE);
     }
 
     private void setupInitialCardBacks() {
-        ImageView playerBase = playerCardContainer.findViewById(R.id.img_card_base);
-        ImageView dealerBase = dealerCardContainer.findViewById(R.id.img_card_base);
+        ImageView playerCard = playerCardContainer.findViewById(R.id.image_card_base);
+        ImageView dealerCard = dealerCardContainer.findViewById(R.id.image_card_base);
 
-        if (playerBase != null) {
-            playerBase.setImageResource(R.drawable.cardback);
-            playerBase.clearColorFilter();
+        if (playerCard != null) {
+            if (currentTheme.equals("deluxe")) {
+                playerCard.setImageResource(R.drawable.deluxe_cardback);
+            }
+            else {
+                playerCard.setImageResource(R.drawable.classic_cardback);
+            }
+            playerCard.clearColorFilter();
         }
-        if (dealerBase != null) {
-            dealerBase.setImageResource(R.drawable.cardback);
-            dealerBase.clearColorFilter();
+        if (dealerCard != null) {
+            if (currentTheme.equals("deluxe")) {
+                dealerCard.setImageResource(R.drawable.deluxe_cardback);
+            }
+            else {
+                dealerCard.setImageResource(R.drawable.classic_cardback);
+            }
+            dealerCard.clearColorFilter();
         }
 
         int[] layersToHide = {
-                R.id.img_card_pips,
-                R.id.img_rank_top,
-                R.id.img_rank_bottom,
-                R.id.img_suit_top,
-                R.id.img_suit_bottom
+                R.id.image_card_symbols,
+                R.id.image_rank_top,
+                R.id.image_rank_bottom,
+                R.id.image_suit_top,
+                R.id.image_suit_bottom
         };
 
-        // 3. Loop through and hide them for both containers
         for (int id : layersToHide) {
             playerCardContainer.findViewById(id).setVisibility(View.GONE);
             dealerCardContainer.findViewById(id).setVisibility(View.GONE);
@@ -292,32 +296,27 @@ public class War extends AppCompatActivity {
                 R.drawable.blackjack_rules
         };
 
-        View dialogView = getLayoutInflater().inflate(R.layout.dialogue_rules, null);
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+        View rules = getLayoutInflater().inflate(R.layout.dialogue_rules, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(rules).create();
 
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        TextView ruleTitle = dialogView.findViewById(R.id.rule_title);
-        TextView ruleDesc = dialogView.findViewById(R.id.rule_description);
-        ImageView ruleImage = dialogView.findViewById(R.id.rule_image);
-        Button btnNext = dialogView.findViewById(R.id.btn_next);
-        Button btnPrev = dialogView.findViewById(R.id.btn_prev);
-        Button btnClose = dialogView.findViewById(R.id.btn_close);
+        TextView ruleTitle = rules.findViewById(R.id.rule_title);
+        TextView ruleDesc = rules.findViewById(R.id.rule_description);
+        ImageView ruleImage = rules.findViewById(R.id.rule_image);
+        Button btnNext = rules.findViewById(R.id.button_next);
+        Button btnPrev = rules.findViewById(R.id.button_prev);
+        Button btnClose = rules.findViewById(R.id.button_close);
 
         currentRulePage = 0;
 
         Runnable updateUI = () -> {
             ruleTitle.setText(titles[currentRulePage]);
 
-            if (descriptions[currentRulePage].isEmpty()) {
-                ruleDesc.setVisibility(View.GONE);
-            }
-            else {
-                ruleDesc.setVisibility(View.VISIBLE);
-                ruleDesc.setText(descriptions[currentRulePage]);
-            }
+            ruleDesc.setVisibility(View.VISIBLE);
+            ruleDesc.setText(descriptions[currentRulePage]);
 
             if (images[currentRulePage] == 0) {
                 ruleImage.setVisibility(View.GONE);

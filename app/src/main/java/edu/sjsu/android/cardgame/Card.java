@@ -4,9 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 
 public class Card {
-    private String suit;
-    private String rank;
-    private int cardID;
+    private final String suit;
+    private final String rank;
+    private final int cardID;
     private boolean isFaceUp;
 
     public Card(String suit, String rank, int cardID) {
@@ -20,14 +20,14 @@ public class Card {
         if(rank.equals("jack") || rank.equals("queen") || rank.equals("king")) {
             return 10;
         }
-        if(rank.equals("1") || rank.equals("ace")) {
+        if(rank.equals("ace")) {
             return 11;
         }
         try {
             return Integer.parseInt(rank);
         }
         catch (NumberFormatException e) {
-            return 0; // Fallback to prevent crash
+            return 0;
         }
     }
 
@@ -53,12 +53,16 @@ public class Card {
 
     public String getRankLabel() {
         switch (rank.toLowerCase()) {
-            case "1":
-            case "ace":   return "ace";
-            case "jack":  return "jack";
-            case "queen": return "queen";
-            case "king":  return "king";
-            default:      return rank; // Returns "2", "3", ... "10"
+            case "ace":
+                return "ace";
+            case "jack":
+                return "jack";
+            case "queen":
+                return "queen";
+            case "king":
+                return "king";
+            default:
+                return rank;
         }
     }
 

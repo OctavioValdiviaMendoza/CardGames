@@ -6,11 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="Shop"
-    android:background="#2D6A4F">>
+    android:background="#2D6A4F">
 
 
     <Button
-        android:id="@+id/btn_back_menu"
+        android:id="@+id/button_back_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/menu"
@@ -24,15 +24,15 @@
         android:id="@+id/coins_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Coins: 100"
+        android:text="@string/coins_default"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/btn_back_menu"
+        app:layout_constraintBottom_toBottomOf="@id/button_back_menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btn_back_menu"/>
+        app:layout_constraintTop_toTopOf="@id/button_back_menu"/>
 
     <FrameLayout
         android:id="@+id/skin_preview"
@@ -44,11 +44,11 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/btn_prev_skin"
+        android:id="@+id/button_prev_skin"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="&lt;"
+        android:text="@string/less_than"
         android:textColor="@android:color/white"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="@id/skin_preview"
@@ -57,11 +57,11 @@
         app:layout_constraintTop_toTopOf="@id/skin_preview" />
 
     <Button
-        android:id="@+id/btn_next_skin"
+        android:id="@+id/button_next_skin"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="&gt;"
+        android:text="@string/greater_than"
         android:textColor="@android:color/white"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="@id/skin_preview"
@@ -83,12 +83,12 @@
         app:layout_constraintTop_toBottomOf="@id/skin_preview" />
 
     <Button
-        android:id="@+id/btn_select"
+        android:id="@+id/button_select"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:backgroundTint="#1B4332"
-        android:text="PURCHASE (50)"
+        android:text="@string/purchase_default"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

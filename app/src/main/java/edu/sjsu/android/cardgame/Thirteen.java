@@ -22,13 +22,13 @@ public class Thirteen extends AppCompatActivity {
     private LinearLayout playerHandLayout;
     private LinearLayout dealerHandLayout;
     private LinearLayout currentPileLayout;
-    private Button btnPlay;
-    private Button btnPass;
-    private Button btnPlayAgain;
+    private Button buttonPlay;
+    private Button buttonPass;
+    private Button buttonPlayAgain;
 
-    private List<Card> playerHand = new ArrayList<>();
-    private List<Card> dealerHand = new ArrayList<>();
-    private List<Card> selectedCards = new ArrayList<>();
+    private final List<Card> playerHand = new ArrayList<>();
+    private final List<Card> dealerHand = new ArrayList<>();
+    private final List<Card> selectedCards = new ArrayList<>();
     private List<Card> currentPile = new ArrayList<>();
     private TextView resultText;
     private TextView playerScoreText;
@@ -58,9 +58,9 @@ public class Thirteen extends AppCompatActivity {
         dealerHandLayout = findViewById(R.id.dealer_hand);
         currentPileLayout = findViewById(R.id.current_pile);
 
-        btnPlay = findViewById(R.id.btn_play);
-        btnPass = findViewById(R.id.btn_pass);
-        btnPlayAgain = findViewById(R.id.btn_play_again);
+        buttonPlay = findViewById(R.id.button_play);
+        buttonPass = findViewById(R.id.button_pass);
+        buttonPlayAgain = findViewById(R.id.button_play_again);
 
         prefs = getSharedPreferences("game_data", MODE_PRIVATE);
         coins = prefs.getInt("coins", 100);
@@ -68,15 +68,15 @@ public class Thirteen extends AppCompatActivity {
 
         deckCreate();
 
-        Button btnBack = findViewById(R.id.btn_back_menu);
-        btnBack.setOnClickListener(v -> finish());
+        Button buttonBack = findViewById(R.id.button_back_menu);
+        buttonBack.setOnClickListener(v -> finish());
 
-        Button btnRules = findViewById(R.id.btn_rules);
-        btnRules.setOnClickListener(v -> showRules());
+        Button buttonRules = findViewById(R.id.button_rules);
+        buttonRules.setOnClickListener(v -> showRules());
 
-        btnPlayAgain.setOnClickListener(v -> resetGame());
-        btnPlay.setOnClickListener(v -> playSelectedCards());
-        btnPass.setOnClickListener(v -> passTurn());
+        buttonPlayAgain.setOnClickListener(v -> resetGame());
+        buttonPlay.setOnClickListener(v -> playSelectedCards());
+        buttonPass.setOnClickListener(v -> passTurn());
 
         startGame();
     }
@@ -88,7 +88,7 @@ public class Thirteen extends AppCompatActivity {
         selectedCards.clear();
         currentPile.clear();
         currentPileLayout.removeAllViews();
-        resultText.setText("Your Turn! Select cards to play.");
+        resultText.setText(R.string.your_turn);
 
         for (int i = 0; i < 13; i++) {
             Card playerCard = deck.draw();
@@ -127,12 +127,12 @@ public class Thirteen extends AppCompatActivity {
         int suitID;
         int rankID;
         
-        ImageView imageBaseCard = cardView.findViewById(R.id.img_card_base);
-        ImageView imageSymbols = cardView.findViewById(R.id.img_card_pips);
-        ImageView imageRankTop = cardView.findViewById(R.id.img_rank_top);
-        ImageView imageSuitTop = cardView.findViewById(R.id.img_suit_top);
-        ImageView imageRankBottom = cardView.findViewById(R.id.img_rank_bottom);
-        ImageView imageSuitBottom = cardView.findViewById(R.id.img_suit_bottom);
+        ImageView imageBaseCard = cardView.findViewById(R.id.image_card_base);
+        ImageView imageSymbols = cardView.findViewById(R.id.image_card_symbols);
+        ImageView imageRankTop = cardView.findViewById(R.id.image_rank_top);
+        ImageView imageSuitTop = cardView.findViewById(R.id.image_suit_top);
+        ImageView imageRankBottom = cardView.findViewById(R.id.image_rank_bottom);
+        ImageView imageSuitBottom = cardView.findViewById(R.id.image_suit_bottom);
 
         String theme = currentTheme;
         String suit = card.getSuit();
@@ -215,8 +215,13 @@ public class Thirteen extends AppCompatActivity {
             }
         }
         else {
-            // Cardback state
-            imageBaseCard.setImageResource(R.drawable.cardback);
+            // Face down
+            if (theme.equals("deluxe")) {
+                imageBaseCard.setImageResource(R.drawable.deluxe_cardback);
+            }
+            else {
+                imageBaseCard.setImageResource(R.drawable.classic_cardback);
+            }
             imageBaseCard.clearColorFilter();
             imageSymbols.setVisibility(View.GONE);
             imageRankTop.setVisibility(View.GONE);
@@ -231,16 +236,15 @@ public class Thirteen extends AppCompatActivity {
 
         for (Card card : hand) {
             View cardView = getLayoutInflater().inflate(R.layout.activity_card_view, layout, false);
-
             setupCardVisuals(cardView, card);
 
-            // Selection Logic for Player
             if (layout == playerHandLayout) {
                 cardView.setOnClickListener(v -> {
                     if (selectedCards.contains(card)) {
                         selectedCards.remove(card);
                         cardView.setTranslationY(0f);
-                    } else {
+                    }
+                    else {
                         selectedCards.add(card);
                         cardView.setTranslationY(-50f);
                     }
@@ -248,21 +252,21 @@ public class Thirteen extends AppCompatActivity {
             }
 
             int screenWidth = getResources().getDisplayMetrics().widthPixels;
-
             int cardWidth;
             int cardHeight;
             int overlap;
 
+            // Resize cards based on screen size
             if (layout == playerHandLayout || layout == dealerHandLayout) {
                 cardWidth = (int) (screenWidth * 0.16);
                 cardHeight = (int) (cardWidth * 1.5);
                 overlap = (int) (-cardWidth * 0.70);
-            } else {
+            }
+            else {
                 cardWidth = (int) (screenWidth * 0.22);
                 cardHeight = (int) (cardWidth * 1.5);
                 overlap = (int) (-cardWidth * 0.45);
             }
-
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(cardWidth, cardHeight);
 
             if (layout.getChildCount() > 0) {
@@ -282,7 +286,7 @@ public class Thirteen extends AppCompatActivity {
         sortHand(selectedCards);
 
         if (isValidPlay(selectedCards)) {
-            btnPlay.setEnabled(false);
+            buttonPlay.setEnabled(false);
 
             animateCardsToPile(playerHandLayout, cardsToPlay, true, () -> {
                 currentPileLayout.animate().alpha(0f).setDuration(300).withEndAction(() -> {
@@ -303,7 +307,7 @@ public class Thirteen extends AppCompatActivity {
             });
         }
         else {
-            Toast.makeText(this, "Invalid Play!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid Play", Toast.LENGTH_SHORT).show();
             renderHand(playerHandLayout, playerHand, false);
             selectedCards.clear();
         }
@@ -312,7 +316,7 @@ public class Thirteen extends AppCompatActivity {
     private void passTurn() {
         currentPile.clear();
         currentPileLayout.removeAllViews();
-        resultText.setText("You passed. Dealer's turn.");
+        resultText.setText("Dealer's turn");
         selectedCards.clear();
         renderHand(playerHandLayout, playerHand, false);
         dealerTurn();
@@ -320,13 +324,19 @@ public class Thirteen extends AppCompatActivity {
 
     private boolean isValidPlay(List<Card> play) {
         String playType = getComboType(play);
-        if (playType.equals("INVALID")) return false;
+        if (playType.equals("INVALID")) {
+            return false;
+        }
 
-        if (currentPile.isEmpty()) return true;
+        if (currentPile.isEmpty()) {
+            return true;
+        }
 
         String pileType = getComboType(currentPile);
 
-        if (!playType.equals(pileType) || play.size() != currentPile.size()) return false;
+        if (!playType.equals(pileType) || play.size() != currentPile.size()) {
+            return false;
+        }
 
         Card highestPlay = play.get(play.size() - 1);
         Card highestPile = currentPile.get(currentPile.size() - 1);
@@ -336,33 +346,41 @@ public class Thirteen extends AppCompatActivity {
 
     private String getComboType(List<Card> cards) {
         int size = cards.size();
-        if (size == 1) return "SINGLE";
+        if (size == 1) {
+            return "SINGLE";
+        }
 
-        boolean allSameRank = true;
+        boolean sameRank = true;
         for (int i = 0; i < size - 1; i++) {
             if (getRankValue(cards.get(i)) != getRankValue(cards.get(i+1))) {
-                allSameRank = false;
+                sameRank = false;
                 break;
             }
         }
-        if (allSameRank) {
-            if (size == 2) return "PAIR";
-            if (size == 3) return "TRIPLE";
-            if (size == 4) return "QUAD";
+        if (sameRank) {
+            if (size == 2) {
+                return "PAIR";
+            }
+            if (size == 3) {
+                return "TRIPLE";
+            }
+            if (size == 4) {
+                return "QUAD";
+            }
         }
 
         if (size >= 3) {
-            boolean isSeq = true;
+            boolean isSequence = true;
             for (Card c : cards) {
                 if (getRankValue(c) == 15) return "INVALID";
             }
             for (int i = 0; i < size - 1; i++) {
                 if (getRankValue(cards.get(i + 1)) - getRankValue(cards.get(i)) != 1) {
-                    isSeq = false;
+                    isSequence = false;
                     break;
                 }
             }
-            if (isSeq) return "SEQUENCE";
+            if (isSequence) return "SEQUENCE";
         }
 
         return "INVALID";
@@ -371,23 +389,23 @@ public class Thirteen extends AppCompatActivity {
     private void dealerTurn() {
         if (dealerHand.isEmpty()) return;
 
-        List<Card> playToMake;
+        List<Card> cardsToPlay;
 
         if (currentPile.isEmpty()) {
-            playToMake = bestPlay(dealerHand);
+            cardsToPlay = bestPlay(dealerHand);
         }
         else {
             String targetType = getComboType(currentPile);
             int targetSize = currentPile.size();
             int pileValue = getThirteenValue(currentPile.get(currentPile.size() - 1));
 
-            playToMake = beatPile(dealerHand, targetType, targetSize, pileValue);
+            cardsToPlay = beatPile(dealerHand, targetType, targetSize, pileValue);
         }
 
-        if (!playToMake.isEmpty()) {
-            animateCardsToPile(dealerHandLayout, playToMake, false, () -> {
-                currentPile = new ArrayList<>(playToMake);
-                dealerHand.removeAll(playToMake);
+        if (!cardsToPlay.isEmpty()) {
+            animateCardsToPile(dealerHandLayout, cardsToPlay, false, () -> {
+                currentPile = new ArrayList<>(cardsToPlay);
+                dealerHand.removeAll(cardsToPlay);
 
                 currentPileLayout.setAlpha(1f);
                 currentPileLayout.removeAllViews();
@@ -395,14 +413,14 @@ public class Thirteen extends AppCompatActivity {
 
                 renderHand(dealerHandLayout, dealerHand, true);
 
-                resultText.setText("Dealer played " + playToMake.size() + " card(s)");
+                resultText.setText("Dealer played " + cardsToPlay.size() + " card(s)");
                 updateCardCounts();
 
                 if (dealerHand.isEmpty()) {
-                    endGame("Dealer Won! -10 coins");
+                    endGame(String.valueOf("LOSE"));
                 } else {
-                    btnPlay.setEnabled(true);
-                    btnPass.setEnabled(true);
+                    buttonPlay.setEnabled(true);
+                    buttonPass.setEnabled(true);
                 }
             });
         }
@@ -411,13 +429,13 @@ public class Thirteen extends AppCompatActivity {
             currentPileLayout.removeAllViews();
             renderHand(dealerHandLayout, dealerHand, true);
             resultText.setText("Dealer passed. It's your turn");
-            btnPlay.setEnabled(true);
-            btnPass.setEnabled(true);
+            buttonPlay.setEnabled(true);
+            buttonPass.setEnabled(true);
         }
 
         updateCardCounts();
         if (playerHand.isEmpty()) {
-            endGame("You Won! +10 coins");
+            endGame("WIN");
         }
     }
 
@@ -468,7 +486,8 @@ public class Thirteen extends AppCompatActivity {
                     return potential;
                 }
             }
-        } else if (targetType.equals("SEQUENCE")) {
+        }
+        else if (targetType.equals("SEQUENCE")) {
             for (int i = 0; i < hand.size(); i++) {
                 List<Card> potential = new ArrayList<>();
                 potential.add(hand.get(i));
@@ -497,10 +516,18 @@ public class Thirteen extends AppCompatActivity {
         int rankVal = getRankValue(c);
         int suitVal = 0;
         switch (c.getSuit()) {
-            case "spades": suitVal = 0; break;
-            case "clubs": suitVal = 1; break;
-            case "diamonds": suitVal = 2; break;
-            case "hearts": suitVal = 3; break;
+            case "spades":
+                suitVal = 0;
+                break;
+            case "clubs":
+                suitVal = 1;
+                break;
+            case "diamonds":
+                suitVal = 2;
+                break;
+            case "hearts":
+                suitVal = 3;
+                break;
         }
         return (rankVal * 10) + suitVal;
     }
@@ -508,11 +535,16 @@ public class Thirteen extends AppCompatActivity {
     private int getRankValue(Card c) {
         String r = c.getRank();
         switch (r) {
-            case "ace": return 14;
-            case "2": return 15;
-            case "jack": return 11;
-            case "queen": return 12;
-            case "king": return 13;
+            case "ace":
+                return 14;
+            case "2":
+                return 15;
+            case "jack":
+                return 11;
+            case "queen":
+                return 12;
+            case "king":
+                return 13;
             default:
                 try {
                     return Integer.parseInt(r);
@@ -533,19 +565,23 @@ public class Thirteen extends AppCompatActivity {
     }
 
     private void endGame(String winner) {
-        btnPlay.setEnabled(false);
-        btnPass.setEnabled(false);
+        buttonPlay.setEnabled(false);
+        buttonPass.setEnabled(false);
         resultText.setText(winner);
-        btnPlayAgain.setVisibility(View.VISIBLE);
+        buttonPlayAgain.setVisibility(View.VISIBLE);
 
-        if (winner.equals("You Won! +10 coins")) changeCoins(10);
-        else changeCoins(-10);
+        if (winner.equals("WIN")) {
+            changeCoins(10);
+        }
+        else {
+            changeCoins(-10);
+        }
     }
 
     private void resetGame() {
-        btnPlay.setEnabled(true);
-        btnPass.setEnabled(true);
-        btnPlayAgain.setVisibility(View.GONE);
+        buttonPlay.setEnabled(true);
+        buttonPass.setEnabled(true);
+        buttonPlayAgain.setVisibility(View.GONE);
         startGame();
     }
 
@@ -586,22 +622,17 @@ public class Thirteen extends AppCompatActivity {
         TextView ruleTitle = dialogView.findViewById(R.id.rule_title);
         TextView ruleDesc = dialogView.findViewById(R.id.rule_description);
         ImageView ruleImage = dialogView.findViewById(R.id.rule_image);
-        Button btnNext = dialogView.findViewById(R.id.btn_next);
-        Button btnPrev = dialogView.findViewById(R.id.btn_prev);
-        Button btnClose = dialogView.findViewById(R.id.btn_close);
+        Button buttonNext = dialogView.findViewById(R.id.button_next);
+        Button buttonPrev = dialogView.findViewById(R.id.button_prev);
+        Button buttonClose = dialogView.findViewById(R.id.button_close);
 
         currentRulePage = 0;
 
         Runnable updateUI = () -> {
             ruleTitle.setText(titles[currentRulePage]);
 
-            if (descriptions[currentRulePage].isEmpty()) {
-                ruleDesc.setVisibility(View.GONE);
-            }
-            else {
-                ruleDesc.setVisibility(View.VISIBLE);
-                ruleDesc.setText(descriptions[currentRulePage]);
-            }
+            ruleDesc.setVisibility(View.VISIBLE);
+            ruleDesc.setText(descriptions[currentRulePage]);
 
             if (images[currentRulePage] == 0) {
                 ruleImage.setVisibility(View.GONE);
@@ -610,34 +641,34 @@ public class Thirteen extends AppCompatActivity {
                 ruleImage.setVisibility(View.VISIBLE);
                 ruleImage.setImageResource(images[currentRulePage]);
             }
-            btnPrev.setVisibility(currentRulePage == 0 ? View.INVISIBLE : View.VISIBLE);
+            buttonPrev.setVisibility(currentRulePage == 0 ? View.INVISIBLE : View.VISIBLE);
 
             if (currentRulePage == 0) {
-                btnPrev.setVisibility(View.GONE);
+                buttonPrev.setVisibility(View.GONE);
             }
             else {
-                btnPrev.setVisibility(View.VISIBLE);
+                buttonPrev.setVisibility(View.VISIBLE);
             }
 
             if (currentRulePage == titles.length - 1) {
-                btnNext.setVisibility(View.GONE);
+                buttonNext.setVisibility(View.GONE);
             }
             else {
-                btnNext.setVisibility(View.VISIBLE);
+                buttonNext.setVisibility(View.VISIBLE);
             }
         };
 
-        btnNext.setOnClickListener(v -> {
+        buttonNext.setOnClickListener(v -> {
             currentRulePage++;
             updateUI.run();
         });
 
-        btnPrev.setOnClickListener(v -> {
+        buttonPrev.setOnClickListener(v -> {
             currentRulePage--;
             updateUI.run();
         });
 
-        btnClose.setOnClickListener(v -> dialog.dismiss());
+        buttonClose.setOnClickListener(v -> dialog.dismiss());
 
         updateUI.run();
         dialog.show();
@@ -662,7 +693,8 @@ public class Thirteen extends AppCompatActivity {
 
         if (amount > 0) {
             animateCoins(Color.GREEN);
-        } else if (amount < 0) {
+        }
+        else if (amount < 0) {
             animateCoins(Color.RED);
         }
     }

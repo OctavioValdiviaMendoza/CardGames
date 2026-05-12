@@ -16,4 +16,18 @@
     <string name="dealer_0">Dealer: 0</string>
     <string name="player_0">Player: 0</string>
     <string name="play_again">Play Again</string>
+    <string name="win">WIN</string>
+    <string name="draw">DRAW</string>
+    <string name="lose">LOSE</string>
+    <string name="back">BACK</string>
+    <string name="next">NEXT</string>
+    <string name="close">CLOSE</string>
+    <string name="shop">Shop</string>
+    <string name="coins_default">Coins: 100</string>
+    <string name="less_than"><![CDATA[<]]></string>
+    <string name="greater_than"><![CDATA[>]]></string>
+    <string name="purchase_default">PURCHASE (50)</string>
+    <string name="equipped">EQUIPPED</string>
+    <string name="select">SELECT</string>
+    <string name="your_turn">Your Turn</string>
 </resources>

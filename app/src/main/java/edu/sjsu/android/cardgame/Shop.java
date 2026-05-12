@@ -7,14 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class Shop extends AppCompatActivity {
     String[] skinNames = {
@@ -23,14 +18,16 @@ public class Shop extends AppCompatActivity {
             "Green",
             "Orange",
             "Purple",
-            "Deluxe"};
+            "Deluxe"
+    };
     String[] skinIDs = {
             "classic",
             "blue",
             "green",
             "orange",
             "purple",
-            "deluxe"};
+            "deluxe"
+    };
     int[] skinColors = {
             Color.TRANSPARENT,
             Color.parseColor("#880000FF"),
@@ -53,18 +50,18 @@ public class Shop extends AppCompatActivity {
         prefs = getSharedPreferences("game_data", MODE_PRIVATE);
         updateUI();
 
-        findViewById(R.id.btn_next_skin).setOnClickListener(v -> {
+        findViewById(R.id.button_next_skin).setOnClickListener(v -> {
             currentIndex = (currentIndex + 1) % skinNames.length;
             updateUI();
         });
 
-        findViewById(R.id.btn_prev_skin).setOnClickListener(v -> {
+        findViewById(R.id.button_prev_skin).setOnClickListener(v -> {
             currentIndex = (currentIndex - 1 + skinNames.length) % skinNames.length;
             updateUI();
         });
 
-        findViewById(R.id.btn_select).setOnClickListener(v -> handleActionButton());
-        findViewById(R.id.btn_back_menu).setOnClickListener(v -> finish());
+        findViewById(R.id.button_select).setOnClickListener(v -> handleActionButton());
+        findViewById(R.id.button_back_menu).setOnClickListener(v -> finish());
     }
 
     private void updateUI() {
@@ -78,12 +75,12 @@ public class Shop extends AppCompatActivity {
         cardContainer.removeAllViews();
         View cardView = getLayoutInflater().inflate(R.layout.activity_card_view, cardContainer, true);
 
-        ImageView imageBaseCard = cardView.findViewById(R.id.img_card_base);
-        ImageView imageSymbols = cardView.findViewById(R.id.img_card_pips);
-        ImageView imageRankTop = cardView.findViewById(R.id.img_rank_top);
-        ImageView imageSuitTop = cardView.findViewById(R.id.img_suit_top);
-        ImageView imageRankBottom = cardView.findViewById(R.id.img_rank_bottom);
-        ImageView imageSuitBottom = cardView.findViewById(R.id.img_suit_bottom);
+        ImageView imageBaseCard = cardView.findViewById(R.id.image_card_base);
+        ImageView imageSymbols = cardView.findViewById(R.id.image_card_symbols);
+        ImageView imageRankTop = cardView.findViewById(R.id.image_rank_top);
+        ImageView imageSuitTop = cardView.findViewById(R.id.image_suit_top);
+        ImageView imageRankBottom = cardView.findViewById(R.id.image_rank_bottom);
+        ImageView imageSuitBottom = cardView.findViewById(R.id.image_suit_bottom);
 
         int baseID = getResources().getIdentifier(themeID + "_card_base", "drawable", getPackageName());
         if (baseID == 0) {
@@ -97,7 +94,7 @@ public class Shop extends AppCompatActivity {
         }
         imageSymbols.setImageResource(symbolID);
 
-        // Using black corners for Spades
+
         int rankID = getResources().getIdentifier(themeID + "_ace_corner", "drawable", getPackageName());
         if (rankID == 0) {
             rankID = R.drawable.classic_ace_corner;
@@ -135,13 +132,13 @@ public class Shop extends AppCompatActivity {
             imageBaseCard.clearColorFilter();
         }
 
-        Button btnAction = findViewById(R.id.btn_select);
+        Button btnAction = findViewById(R.id.button_select);
         if (themeID.equals(equippedTheme)) {
-            btnAction.setText("EQUIPPED");
+            btnAction.setText(R.string.equipped);
             btnAction.setEnabled(false);
         }
         else if (isOwned) {
-            btnAction.setText("SELECT");
+            btnAction.setText(R.string.select);
             btnAction.setEnabled(true);
         }
         else {

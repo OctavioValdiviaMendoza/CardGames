@@ -9,7 +9,7 @@
     tools:context=".BlackJack">
 
     <Button
-        android:id="@+id/btn_back_menu"
+        android:id="@+id/button_back_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -31,13 +31,13 @@
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/btn_back_menu"
-        app:layout_constraintEnd_toStartOf="@id/btn_rules"
-        app:layout_constraintStart_toEndOf="@id/btn_back_menu"
-        app:layout_constraintTop_toTopOf="@id/btn_back_menu" />
+        app:layout_constraintBottom_toBottomOf="@id/button_back_menu"
+        app:layout_constraintEnd_toStartOf="@id/button_rules"
+        app:layout_constraintStart_toEndOf="@id/button_back_menu"
+        app:layout_constraintTop_toTopOf="@id/button_back_menu" />
 
     <Button
-        android:id="@+id/btn_rules"
+        android:id="@+id/button_rules"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -59,7 +59,7 @@
         app:layout_constraintBottom_toTopOf="@id/score_result_box"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_back_menu"
+        app:layout_constraintTop_toBottomOf="@id/button_back_menu"
         app:layout_constraintVertical_chainStyle="spread" />
 
     <LinearLayout
@@ -107,7 +107,7 @@
             android:textSize="17sp" />
 
         <Button
-            android:id="@+id/btn_play_again"
+            android:id="@+id/button_play_again"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -143,7 +143,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/btn_hit"
+            android:id="@+id/button_hit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
@@ -151,7 +151,7 @@
             android:text="@string/hit_button" />
 
         <Button
-            android:id="@+id/btn_stand"
+            android:id="@+id/button_stand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#1B4332"

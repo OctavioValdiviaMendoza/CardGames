@@ -14,7 +14,7 @@
         android:padding="24dp">
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/card_games"
@@ -25,7 +25,7 @@
             android:layout_marginBottom="8dp" />
 
         <TextView
-            android:id="@+id/tvSubtitle"
+            android:id="@+id/app_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/choose_a_game"
@@ -48,7 +48,7 @@
                 android:padding="24dp">
 
                 <Button
-                    android:id="@+id/btnBlackjack"
+                    android:id="@+id/button_blackjack"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:text="@string/blackjack"
@@ -60,7 +60,7 @@
                     android:layout_marginBottom="16dp" />
 
                 <Button
-                    android:id="@+id/btnThirteen"
+                    android:id="@+id/button_thirteen"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:text="@string/thirteen"
@@ -72,7 +72,7 @@
                     android:layout_marginBottom="16dp" />
 
                 <Button
-                    android:id="@+id/btnWar"
+                    android:id="@+id/button_war"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:text="@string/war"
@@ -84,10 +84,10 @@
                     android:layout_marginBottom="16dp" />
 
                 <Button
-                    android:id="@+id/btnShop"
+                    android:id="@+id/button_shop"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:text="Shop"
+                    android:text="@string/shop"
                     android:textAllCaps="false"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -96,7 +96,7 @@
                     android:layout_marginBottom="16dp" />
 
                 <Button
-                    android:id="@+id/btnExit"
+                    android:id="@+id/butto_exit"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:text="@string/exit"

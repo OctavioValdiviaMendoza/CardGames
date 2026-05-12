@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/img_card_base"
+        android:id="@+id/image_card_base"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/card_base_white" />
+        android:src="@drawable/card_base_white"
+        tools:ignore="ContentDescription" />
 
     <ImageView
-        android:id="@+id/img_card_pips"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@+id/img_rank_top"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@+id/img_suit_top"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@+id/img_rank_bottom"
+        android:id="@+id/image_card_symbols"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:rotation="180" />
+        tools:ignore="ContentDescription" />
 
     <ImageView
-        android:id="@+id/img_suit_bottom"
+        android:id="@+id/image_rank_top"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:rotation="180" />
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/image_suit_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/image_rank_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:rotation="180"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/image_suit_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:rotation="180"
+        tools:ignore="ContentDescription" />
 
 </FrameLayout>

@@ -1,15 +1,13 @@
 package edu.sjsu.android.cardgame;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Deck {
 
-    private static List<Card> masterDeck = new ArrayList<>();
-    private List<Card> cards = new ArrayList<>();
+    private static final List<Card> masterDeck = new ArrayList<>();
+    private final List<Card> cards = new ArrayList<>();
 
     static {
         String[] suits = {"clubs", "hearts", "diamonds", "spades"};
@@ -17,7 +15,6 @@ public class Deck {
 
         for (String suit : suits) {
             for (String rank : ranks) {
-                // Initialize the master list once
                 masterDeck.add(new Card(suit, rank, 0));
             }
         }

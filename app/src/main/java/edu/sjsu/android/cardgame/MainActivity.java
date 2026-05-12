@@ -8,44 +8,38 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnBlackjack;
-    private Button btnThirteen;
-    private Button btnWar;
-    private Button btnExit;
-    private Button btnShop;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnBlackjack = findViewById(R.id.btnBlackjack);
-        btnThirteen = findViewById(R.id.btnThirteen);
-        btnWar = findViewById(R.id.btnWar);
-        btnExit = findViewById(R.id.btnExit);
-        btnShop = findViewById(R.id.btnShop);
+        Button buttonBlackjack = findViewById(R.id.button_blackjack);
+        Button buttonThirteen = findViewById(R.id.button_thirteen);
+        Button buttonWar = findViewById(R.id.button_war);
+        Button buttonExit = findViewById(R.id.butto_exit);
+        Button buttonShop = findViewById(R.id.button_shop);
 
         new Thread(() -> {
             Deck preloadDeck = new Deck();
         }).start();
 
-        btnBlackjack.setOnClickListener(v -> {
+        buttonBlackjack.setOnClickListener(v -> {
             Intent intent = new Intent(this, BlackJack.class);
             startActivity(intent);
         });
-        btnThirteen.setOnClickListener(v -> {
+        buttonThirteen.setOnClickListener(v -> {
             Intent intent = new Intent(this, Thirteen.class);
             startActivity(intent);
         });
-        btnWar.setOnClickListener(v -> {
+        buttonWar.setOnClickListener(v -> {
             Intent intent = new Intent(this, War.class);
             startActivity(intent);
         });
-        btnShop.setOnClickListener(v -> {
+        buttonShop.setOnClickListener(v -> {
             Intent intent = new Intent(this, Shop.class);
             startActivity(intent);
         });
-        btnExit.setOnClickListener(v -> {
+        buttonExit.setOnClickListener(v -> {
             finish();
         });
     }

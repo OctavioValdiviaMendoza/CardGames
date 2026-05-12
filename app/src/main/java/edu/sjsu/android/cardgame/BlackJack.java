@@ -24,16 +24,16 @@ public class BlackJack extends AppCompatActivity {
     private Deck deck;
     private LinearLayout playerHand;
     private LinearLayout dealerHand;
-    private List<Card> playerCardList = new ArrayList<>();
-    private List<Card> dealerCardList = new ArrayList<>();
-    private Button btnHit;
-    private Button btnStand;
+    private final List<Card> playerCardList = new ArrayList<>();
+    private final List<Card> dealerCardList = new ArrayList<>();
+    private Button buttonHit;
+    private Button buttonStand;
 
     private TextView playerScoreText;
     private TextView dealerScoreText;
 
     private TextView resultText;
-    private Button btnPlayAgain;
+    private Button buttonPlayAgain;
 
     private TextView coinsText;
     private SharedPreferences prefs;
@@ -62,26 +62,25 @@ public class BlackJack extends AppCompatActivity {
 
         playerHand = findViewById(R.id.player_hand);
         dealerHand = findViewById(R.id.dealer_hand);
-        btnHit = findViewById(R.id.btn_hit);
-        btnStand = findViewById(R.id.btn_stand);
+        buttonHit = findViewById(R.id.button_hit);
+        buttonStand = findViewById(R.id.button_stand);
         coinsText = findViewById(R.id.coins_text);
 
         prefs = getSharedPreferences("game_data", MODE_PRIVATE);
         coins = prefs.getInt("coins", 100);
 
         updateCoinsText();
-        Button btnBack = findViewById(R.id.btn_back_menu);
 
+        Button btnBack = findViewById(R.id.button_back_menu);
         btnBack.setOnClickListener(v -> finish());
 
-        Button btnRules = findViewById(R.id.btn_rules);
-
-        btnRules.setOnClickListener(v -> showRules());
+        Button buttonRules = findViewById(R.id.button_rules);
+        buttonRules.setOnClickListener(v -> showRules());
 
         resultText = findViewById(R.id.result_text);
-        btnPlayAgain = findViewById(R.id.btn_play_again);
+        buttonPlayAgain = findViewById(R.id.button_play_again);
 
-        btnPlayAgain.setOnClickListener(v -> resetGame());
+        buttonPlayAgain.setOnClickListener(v -> resetGame());
 
         if (deck == null) {
             deck = new Deck();
@@ -94,7 +93,7 @@ public class BlackJack extends AppCompatActivity {
 
         // Hit button
         // Draws another random card to the player's hand
-        btnHit.setOnClickListener(v -> {
+        buttonHit.setOnClickListener(v -> {
             Card card = deck.draw();
 
             if (card != null) {
@@ -102,43 +101,48 @@ public class BlackJack extends AppCompatActivity {
                 updateScores(false);
                 int score = calculateScore(playerCardList);
                 if (score > 21) {
-                    btnHit.setEnabled(false);
-                    btnStand.setEnabled(false);
+                    buttonHit.setEnabled(false);
+                    buttonStand.setEnabled(false);
                     dealerTurn();
                 }
             }
         });
 
         // Stand button
-        btnStand.setOnClickListener(v -> {
-            btnHit.setEnabled(false);
-            btnStand.setEnabled(false);
+        // Passes the turn to the dealer
+        buttonStand.setOnClickListener(v -> {
+            buttonHit.setEnabled(false);
+            buttonStand.setEnabled(false);
             dealerTurn();
         });
     }
 
+    // Initialize player and dealer hands at the start of the game
     private void dealHands() {
+        // Draw 2 player cards and 1 dealer card (face up)
         drawCard(playerHand, deck.draw());
         drawCard(playerHand, deck.draw());
-
         drawCard(dealerHand, deck.draw());
 
+        // Draw 1 dealer card (face down)
         Card hiddenCard = deck.draw();
         hiddenCard.setFaceUp(false);
         drawCard(dealerHand, hiddenCard);
 
+        // End turn if player score is 21
         if (calculateScore(playerCardList) == 21) {
-            btnHit.setEnabled(false);
-            btnStand.setEnabled(false);
+            buttonHit.setEnabled(false);
+            buttonStand.setEnabled(false);
             dealerTurn();
         }
     }
 
     // Draws a card to the hand
-    // drawCard calls on drawCardAtIndex so that the dealer can reveal their card
+    // drawCard() calls  drawCardAtIndex() so that the dealer can reveal their card
     private void drawCard(LinearLayout hand, Card card) {
         drawCardAtIndex(hand, card, hand.getChildCount());
     }
+
     private void drawCardAtIndex(LinearLayout hand, Card card, int index) {
         int baseCardID;
         int symbolID;
@@ -147,12 +151,12 @@ public class BlackJack extends AppCompatActivity {
 
         View cardView = getLayoutInflater().inflate(R.layout.activity_card_view, hand, false);
 
-        ImageView imageBaseCard = cardView.findViewById(R.id.img_card_base);
-        ImageView imageSymbols = cardView.findViewById(R.id.img_card_pips);
-        ImageView imageRankTop = cardView.findViewById(R.id.img_rank_top);
-        ImageView imageSuitTop = cardView.findViewById(R.id.img_suit_top);
-        ImageView imageRankBottom = cardView.findViewById(R.id.img_rank_bottom);
-        ImageView imageSuitBottom = cardView.findViewById(R.id.img_suit_bottom);
+        ImageView imageBaseCard = cardView.findViewById(R.id.image_card_base);
+        ImageView imageSymbols = cardView.findViewById(R.id.image_card_symbols);
+        ImageView imageRankTop = cardView.findViewById(R.id.image_rank_top);
+        ImageView imageSuitTop = cardView.findViewById(R.id.image_suit_top);
+        ImageView imageRankBottom = cardView.findViewById(R.id.image_rank_bottom);
+        ImageView imageSuitBottom = cardView.findViewById(R.id.image_suit_bottom);
 
         String theme = currentTheme;
         String suit = card.getSuit();
@@ -199,7 +203,12 @@ public class BlackJack extends AppCompatActivity {
         }
         else {
             // Face down
-            imageBaseCard.setImageResource(R.drawable.cardback);
+            if (theme.equals("deluxe")) {
+                imageBaseCard.setImageResource(R.drawable.deluxe_cardback);
+            }
+            else {
+                imageBaseCard.setImageResource(R.drawable.classic_cardback);
+            }
             imageSymbols.setVisibility(View.GONE);
             imageRankTop.setVisibility(View.GONE);
             imageSuitTop.setVisibility(View.GONE);
@@ -214,7 +223,6 @@ public class BlackJack extends AppCompatActivity {
             imageRankTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
             imageRankBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
             imageSuitTop.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
-
             imageSuitBottom.setColorFilter(android.graphics.Color.parseColor("#980000"), mode);
         }
         else if (theme.equals("blue") || theme.equals("green") ||
@@ -235,39 +243,32 @@ public class BlackJack extends AppCompatActivity {
             imageBaseCard.clearColorFilter();
         }
 
-        // Layout Params
+        // Resize cards according to screen sizes
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
-
         int cardWidth = (int) (screenWidth * 0.22);
         int cardHeight = (int) (cardWidth * 1.4);
         int overlap = (int) (-cardWidth * 0.4);
-
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(cardWidth, cardHeight);
-
         if (index > 0) {
             params.setMargins(overlap, 0, 0, 0);
         }
-
         cardView.setLayoutParams(params);
-
-        // Add to UI
         hand.addView(cardView, index);
 
-        // Logic: Only add to lists if this is a NEW draw (not a reveal)
-        // We check if the hand already contains the card logic-wise
+        // Add cards
         if (hand == playerHand && !playerCardList.contains(card)) {
             playerCardList.add(card);
-        } else if (hand == dealerHand && !dealerCardList.contains(card)) {
+        }
+        else if (hand == dealerHand && !dealerCardList.contains(card)) {
             dealerCardList.add(card);
         }
 
-        // Animation
+        // Animations
         if (card.isFaceUp() && index == 1 && hand == dealerHand) {
-            // Special "Flip" animation for the dealer reveal
             cardView.setRotationY(-90f);
             cardView.animate().rotationY(0f).setDuration(300).start();
-        } else {
-            // Standard draw animation
+        }
+        else {
             cardView.setAlpha(0f);
             cardView.setTranslationY(hand == playerHand ? 200f : -200f);
             cardView.animate().alpha(1f).translationY(0f).setDuration(400).start();
@@ -298,11 +299,11 @@ public class BlackJack extends AppCompatActivity {
 
     private void dealerTurn() {
         new android.os.Handler(getMainLooper()).postDelayed(() -> {
-            // Flip the hidden card data
+            // Flip card
             Card hiddenCard = dealerCardList.get(1);
             hiddenCard.setFaceUp(true);
 
-            // Replace the View at index 1
+            // Redraws the card
             dealerHand.removeViewAt(1);
             drawCardAtIndex(dealerHand, hiddenCard, 1);
 
@@ -311,6 +312,7 @@ public class BlackJack extends AppCompatActivity {
         }, 500);
     }
 
+    // Dealer logic:
     // Dealer continues to hit until it is at least 17 or is a bust
     // Adds a small delay between each hit
     private void dealerHit() {
@@ -325,9 +327,12 @@ public class BlackJack extends AppCompatActivity {
             }, 500);
         }
         else {
-            new android.os.Handler(getMainLooper()).postDelayed(this::determineWinner, 500);
+            new android.os.Handler(getMainLooper()).postDelayed(() -> {
+                determineWinner();
+            }, 500);
         }
     }
+
 
     private void determineWinner() {
         int playerScore = calculateScore(playerCardList);
@@ -337,38 +342,43 @@ public class BlackJack extends AppCompatActivity {
         String message;
 
         if (playerScore > 21) {
-            title = "You Lost";
+            title = getString(R.string.lose);
             message = "You busted";
-        } else if (dealerScore > 21) {
-            title = "You Won";
+        }
+        else if (dealerScore > 21) {
+            title = getString(R.string.win);
             message = "The dealer busted";
-        } else if (playerScore > dealerScore) {
-            title = "You Won";
+        }
+        else if (playerScore > dealerScore) {
+            title = getString(R.string.win);
             message = "You have the higher score";
-        } else if (dealerScore > playerScore) {
-            title = "You Lost";
+        }
+        else if (dealerScore > playerScore) {
+            title = getString(R.string.lose);
             message = "The dealer has a higher score.";
-        } else {
-            title = "Draw";
+        }
+        else {
+            title = getString(R.string.draw);
             message = "Both you and the dealer have the same score";
         }
 
-        if (title.equals("You Won")) {
+        if (title.equals(getString(R.string.win))) {
             changeCoins(10);
-        } else if (title.equals("You Lost")) {
+        }
+        else if (title.equals(getString(R.string.lose))) {
             changeCoins(-10);
         }
 
         resultText.setText(title + "\n" + message);
-        btnPlayAgain.setVisibility(View.VISIBLE);
+        buttonPlayAgain.setVisibility(View.VISIBLE);
 
-        btnHit.setEnabled(false);
-        btnStand.setEnabled(false);
+        buttonHit.setEnabled(false);
+        buttonStand.setEnabled(false);
     }
 
     private void resetGame() {
         resultText.setText("");
-        btnPlayAgain.setVisibility(View.GONE);
+        buttonPlayAgain.setVisibility(View.GONE);
 
         playerHand.removeAllViews();
         dealerHand.removeAllViews();
@@ -376,8 +386,8 @@ public class BlackJack extends AppCompatActivity {
         playerCardList.clear();
         dealerCardList.clear();
 
-        btnHit.setEnabled(true);
-        btnStand.setEnabled(true);
+        buttonHit.setEnabled(true);
+        buttonStand.setEnabled(true);
 
         if (deck == null) {
             deck = new Deck();
@@ -389,19 +399,18 @@ public class BlackJack extends AppCompatActivity {
         updateScores(false);
     }
 
-    //updates the scores shown for the player and dealer
     private void updateScores(boolean revealDealer) {
         int playerScore = calculateScore(playerCardList);
-        playerScoreText.setText("Player: " + playerScore);
+        playerScoreText.setText("PLAYER: " + playerScore);
 
         if (revealDealer) {
             int dealerScore = calculateScore(dealerCardList);
-            dealerScoreText.setText("Dealer: " + dealerScore);
-        } else {
-            // Only show first dealer card
-            if (dealerCardList.size() > 0) {
+            dealerScoreText.setText("DEALER: " + dealerScore);
+        }
+        else {
+            if (!dealerCardList.isEmpty()) {
                 int visibleValue = dealerCardList.get(0).getValue();
-                dealerScoreText.setText("Dealer: " + visibleValue + " + ?");
+                dealerScoreText.setText("DEALER: " + visibleValue + " + [?]");
             }
         }
     }
@@ -424,25 +433,27 @@ public class BlackJack extends AppCompatActivity {
                 R.drawable.blackjack_rules
         };
 
-        View dialogView = getLayoutInflater().inflate(R.layout.dialogue_rules, null);
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+        View rules = getLayoutInflater().inflate(R.layout.dialogue_rules, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(rules).create();
 
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        TextView ruleTitle = dialogView.findViewById(R.id.rule_title);
-        TextView ruleDesc = dialogView.findViewById(R.id.rule_description);
-        ImageView ruleImage = dialogView.findViewById(R.id.rule_image);
-        Button btnNext = dialogView.findViewById(R.id.btn_next);
-        Button btnPrev = dialogView.findViewById(R.id.btn_prev);
-        Button btnClose = dialogView.findViewById(R.id.btn_close);
+        TextView ruleTitle = rules.findViewById(R.id.rule_title);
+        TextView ruleDesc = rules.findViewById(R.id.rule_description);
+        ImageView ruleImage = rules.findViewById(R.id.rule_image);
+        Button buttonNext = rules.findViewById(R.id.button_next);
+        Button buttonPrev = rules.findViewById(R.id.button_prev);
+        Button buttonClose = rules.findViewById(R.id.button_close);
 
         currentRulePage = 0;
 
+        // Handles all the UI elements
         Runnable updateUI = () -> {
             ruleTitle.setText(titles[currentRulePage]);
 
+            // Descriptions
             if (descriptions[currentRulePage].isEmpty()) {
                 ruleDesc.setVisibility(View.GONE);
             }
@@ -451,6 +462,7 @@ public class BlackJack extends AppCompatActivity {
                 ruleDesc.setText(descriptions[currentRulePage]);
             }
 
+            // Images
             if (images[currentRulePage] == 0) {
                 ruleImage.setVisibility(View.GONE);
             }
@@ -458,34 +470,37 @@ public class BlackJack extends AppCompatActivity {
                 ruleImage.setVisibility(View.VISIBLE);
                 ruleImage.setImageResource(images[currentRulePage]);
             }
-            btnPrev.setVisibility(currentRulePage == 0 ? View.INVISIBLE : View.VISIBLE);
 
+            // Previous button
             if (currentRulePage == 0) {
-                btnPrev.setVisibility(View.GONE);
+                buttonPrev.setVisibility(View.GONE);
             }
             else {
-                btnPrev.setVisibility(View.VISIBLE);
+                buttonPrev.setVisibility(View.VISIBLE);
             }
 
+            // Next button
             if (currentRulePage == titles.length - 1) {
-                btnNext.setVisibility(View.GONE);
+                buttonNext.setVisibility(View.GONE);
             }
             else {
-                btnNext.setVisibility(View.VISIBLE);
+                buttonNext.setVisibility(View.VISIBLE);
             }
         };
 
-        btnNext.setOnClickListener(v -> {
+        buttonNext.setOnClickListener(v -> {
             currentRulePage++;
             updateUI.run();
         });
 
-        btnPrev.setOnClickListener(v -> {
+        buttonPrev.setOnClickListener(v -> {
             currentRulePage--;
             updateUI.run();
         });
 
-        btnClose.setOnClickListener(v -> dialog.dismiss());
+        buttonClose.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
 
         updateUI.run();
         dialog.show();
@@ -510,7 +525,8 @@ public class BlackJack extends AppCompatActivity {
 
         if (amount > 0) {
             animateCoins(Color.GREEN);
-        } else if (amount < 0) {
+        }
+        else if (amount < 0) {
             animateCoins(Color.RED);
         }
     }
