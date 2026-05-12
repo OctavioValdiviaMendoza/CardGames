@@ -12,5 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="fontFamily">@font/agency_font</item>
+        <item name="android:fontFamily">@font/agency_font</item>
     </style>
 </resources>
